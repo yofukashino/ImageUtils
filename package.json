@@ -1,0 +1,39 @@
+{
+    "name":  "image-utils",
+    "version":  "1.0.0",
+    "description":  "Image Utilities By Tharki because a certain someone didn\u0027t make it",
+    "engines":  {
+                    "node":  "\u003e=20.0.0",
+                    "pnpm":  "\u003e=8.0.0"
+                },
+    "scripts":  {
+                    "eslint:check":  "eslint ./src",
+                    "eslint:fix":  "eslint ./src --fix",
+                    "release":  "replugged release",
+                    "build":  "replugged build plugin",
+                    "bundle":  "replugged bundle plugin",
+                    "lint":  "pnpm run prettier:check \u0026 pnpm run eslint:check \u0026 pnpm run check",
+                    "watch":  "replugged build plugin --watch",
+                    "prettier:fix":  "prettier ./src --write",
+                    "lint:fix":  "pnpm run prettier:fix \u0026 pnpm run eslint:fix",
+                    "prettier:check":  "prettier ./src --check",
+                    "check":  "tsc --noEmit"
+                },
+    "keywords":  [
+
+                 ],
+    "author":  "",
+    "license":  "ISC",
+    "devDependencies":  {
+                            "@types/node":  "^20.11.0",
+                            "@typescript-eslint/eslint-plugin":  "^6.18.1",
+                            "@typescript-eslint/parser":  "^6.18.1",
+                            "eslint":  "^8.56.0",
+                            "eslint-config-dmitmel":  "github:dmitmel/eslint-config-dmitmel",
+                            "eslint-plugin-node":  "^11.1.0",
+                            "eslint-plugin-react":  "^7.33.2",
+                            "prettier":  "^3.2.2",
+                            "replugged":  "^4.7.7",
+                            "typescript":  "^5.3.3"
+                        }
+}
