@@ -44,7 +44,7 @@ export default (): void => {
                 IconUtils.default.getGuildBannerURL(
                   {
                     id: guild?.id,
-                    icon: guild?.icon,
+                    banner: guild?.banner,
                     canAnimate: true,
                   },
                   true,

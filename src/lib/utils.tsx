@@ -9,6 +9,7 @@ import { defaultSettings } from "./consts";
 export const getImageHex = (url: string, { x, y }: { x: number; y: number }): Promise<string> =>
   new Promise((resolve, reject) => {
     const img = new Image();
+    img.crossOrigin = "Anonymous";
     img.onload = function () {
       const canvas = document.createElement("canvas");
       canvas.width = img.width;

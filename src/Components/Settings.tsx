@@ -79,7 +79,7 @@ export const Settings = (): React.ReactElement => {
       </Category>
       <Category title="Image Details">
         <SwitchItem
-          note="Show Hex code in image footer of wherever on image your cursor is."
+          note="Show Hex code in image footer of wherever on image your cursor is. (Buddy on Animated Stickers)"
           {...Utils.useSetting(SettingValues, "hex", defaultSettings.hex)}>
           Hex Color Code
         </SwitchItem>
