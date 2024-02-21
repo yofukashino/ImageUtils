@@ -32,21 +32,20 @@ export default (): void => {
       const index = (menu?.children as React.ReactElement[]).findIndex(
         (c) => c.props.id === "replugged",
       );
+      const streamPreviewUrl = ApplicationStreamPreviewStore.getPreviewURL(
+        stream?.guildId,
+        stream?.channelId,
+        stream?.ownerId,
+      ) as string;
       (menu?.children as React.ReactElement[])?.splice?.(
         index,
         0,
         <ContextMenu.MenuGroup label="Image Utils">
-          {stream ? (
+          {streamPreviewUrl ? (
             <ContextMenu.MenuItem
               id="imageUtils-stream"
               label="View Stream Preview"
-              {...Utils.mapMenuItem(
-                ApplicationStreamPreviewStore.getPreviewURL(
-                  stream.guildId,
-                  stream.channelId,
-                  stream.ownerId,
-                ) as string,
-              )}
+              {...Utils.mapMenuItem(streamPreviewUrl)}
             />
           ) : null}
         </ContextMenu.MenuGroup>,

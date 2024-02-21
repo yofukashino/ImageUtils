@@ -36,60 +36,64 @@ export default (): void => {
 
       (menu?.children as React.ReactElement[])?.unshift?.(
         <ContextMenu.MenuGroup>
-          <ContextMenu.MenuCheckboxItem
-            id="imageUtils-square"
-            label="Square Lens"
-            checked={square}
-            action={() => setSquare(!square)}
-          />
-          <ContextMenu.MenuCheckboxItem
-            id="imageUtils-pixelZoom"
-            label="Pixel Zoom"
-            checked={pixelZoom}
-            action={() => setPixelZoom(!pixelZoom)}
-          />
-          <ContextMenu.MenuControlItem
-            id="imageUtils-zoom"
-            label="Zoom"
-            control={(props, ref) => (
-              <MenuSliderControl
-                ref={ref}
-                {...props}
-                minValue={1}
-                maxValue={50}
-                {...Utils.useSetting(SettingValues, "zoom", defaultSettings.zoom)}
-                renderValue={(value: number) => `${value.toFixed(0)}x`}
+          {SettingValues.get("hideLens") ? null : (
+            <>
+              <ContextMenu.MenuCheckboxItem
+                id="imageUtils-square"
+                label="Square Lens"
+                checked={square}
+                action={() => setSquare(!square)}
               />
-            )}
-          />
-          <ContextMenu.MenuControlItem
-            id="imageUtils-size"
-            label="Lens Size"
-            control={(props, ref) => (
-              <MenuSliderControl
-                ref={ref}
-                {...props}
-                minValue={50}
-                maxValue={1000}
-                {...Utils.useSetting(SettingValues, "size", defaultSettings.size)}
-                renderValue={(value: number) => `${value.toFixed(0)}px`}
+              <ContextMenu.MenuCheckboxItem
+                id="imageUtils-pixelZoom"
+                label="Pixel Zoom"
+                checked={pixelZoom}
+                action={() => setPixelZoom(!pixelZoom)}
               />
-            )}
-          />
-          <ContextMenu.MenuControlItem
-            id="imageUtils-speed"
-            label="Scroll Speed"
-            control={(props, ref) => (
-              <MenuSliderControl
-                ref={ref}
-                {...props}
-                minValue={0.1}
-                maxValue={5}
-                {...Utils.useSetting(SettingValues, "scrollSpeed", defaultSettings.scrollSpeed)}
-                renderValue={(value: number) => `${value.toFixed(3)}x`}
+              <ContextMenu.MenuControlItem
+                id="imageUtils-zoom"
+                label="Zoom"
+                control={(props, ref) => (
+                  <MenuSliderControl
+                    ref={ref}
+                    {...props}
+                    minValue={1}
+                    maxValue={50}
+                    {...Utils.useSetting(SettingValues, "zoom", defaultSettings.zoom)}
+                    renderValue={(value: number) => `${value.toFixed(0)}x`}
+                  />
+                )}
               />
-            )}
-          />
+              <ContextMenu.MenuControlItem
+                id="imageUtils-size"
+                label="Lens Size"
+                control={(props, ref) => (
+                  <MenuSliderControl
+                    ref={ref}
+                    {...props}
+                    minValue={50}
+                    maxValue={1000}
+                    {...Utils.useSetting(SettingValues, "size", defaultSettings.size)}
+                    renderValue={(value: number) => `${value.toFixed(0)}px`}
+                  />
+                )}
+              />
+              <ContextMenu.MenuControlItem
+                id="imageUtils-speed"
+                label="Scroll Speed"
+                control={(props, ref) => (
+                  <MenuSliderControl
+                    ref={ref}
+                    {...props}
+                    minValue={0.1}
+                    maxValue={5}
+                    {...Utils.useSetting(SettingValues, "scrollSpeed", defaultSettings.scrollSpeed)}
+                    renderValue={(value: number) => `${value.toFixed(3)}x`}
+                  />
+                )}
+              />
+            </>
+          )}
           {SettingValues.get("engines", defaultSettings.engines).length > 0 && (
             <ContextMenu.MenuItem
               label="Search Image"

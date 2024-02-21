@@ -28,6 +28,11 @@ export default (): void => {
           channelId: string;
           ownerId: string;
         });
+      const streamPreviewUrl = ApplicationStreamPreviewStore.getPreviewURL(
+        stream?.guildId,
+        stream?.channelId,
+        stream?.ownerId,
+      ) as string;
       const index = (menu?.children as React.ReactElement[]).findIndex(
         (c) => c.props.id === "replugged",
       );
@@ -83,17 +88,11 @@ export default (): void => {
               {...Utils.mapMenuItem(usrbg.img)}
             />
           ) : null}
-          {stream ? (
+          {streamPreviewUrl ? (
             <ContextMenu.MenuItem
               id="imageUtils-stream"
               label="View Stream Preview"
-              {...Utils.mapMenuItem(
-                ApplicationStreamPreviewStore.getPreviewURL(
-                  stream.guildId,
-                  stream.channelId,
-                  stream.ownerId,
-                ) as string,
-              )}
+              {...Utils.mapMenuItem(streamPreviewUrl)}
             />
           ) : null}
         </ContextMenu.MenuGroup>,
