@@ -122,7 +122,9 @@ export const mapMenuItem = (
         animated ? true : c !== "gif",
       );
   const sizes = url.includes("discord")
-    ? SettingValues.get("iconSize", defaultSettings.iconSize)
+    ? SettingValues.get("iconSize", defaultSettings.iconSize).sort(
+        (a: string, b: string) => Number(a) - Number(b),
+      )
     : ["512"];
 
   if (formats.length === 0 || sizes.length === 0) {
