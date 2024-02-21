@@ -5,6 +5,7 @@ import { DiscordNative } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 import Utils from "../lib/utils";
 import Types from "../types";
+import apngParse, { APNG } from "apng-js";
 export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => {
   const OriginalComponent = props.children.bind(null, props.childProps);
   const originalComponentRef = React.useRef(OriginalComponent);
@@ -16,7 +17,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
   const mouseOver = React.useRef(false);
   const element = React.useRef<HTMLDivElement | null>(null);
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
-
+  const apngRef = React.useRef<APNG | null>(null);
   React.useEffect(() => {
     const elem = document.getElementById("image-utils-modal") as HTMLDivElement;
     element.current = elem;
@@ -41,6 +42,20 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
     const getAndSetHost = (): void => {
       const url = new URL(props.src);
       setHost(url.host);
+    };
+    const getAndSetApng = async (): Promise<void> => {
+      const imgBuffer = await fetch(props.src).then((response) => response.arrayBuffer());
+      const apng = apngParse(imgBuffer);
+      if (apng instanceof Error) {
+        return;
+      }
+      while (
+        !element.current?.querySelector("img") &&
+        !element.current?.querySelector("video[class*=embedVideo]")
+      ) {
+        await Utils.sleep(100);
+      }
+      apngRef.current = apng;
     };
 
     const onMouseMove = (e): void => {
@@ -89,6 +104,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
     waitForVideo();
     getAndSetDimensions();
     getAndSetHost();
+    getAndSetApng();
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       element.current.removeEventListener("mousemove", onMouseMove);
@@ -98,21 +114,54 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
   }, []);
   React.useEffect(() => {
     const getAndSetHex = async (): Promise<void> => {
+      if (!mouseOver.current) {
+        setHex("#000000");
+        hexRef.current = "#000000";
+        return;
+      }
       const hex = await Utils.getImageHex(props.src, cursorPosition);
       setHex(hex);
       hexRef.current = hex;
     };
     const onTimeUpdate = (): void => {
-      const hex = Utils.getVideoHex(videoRef.current, cursorPosition);
+      if (!mouseOver.current) {
+        setHex("#000000");
+        hexRef.current = "#000000";
+        return;
+      }
+      const hex = Utils.getElementHex(videoRef.current, cursorPosition);
       setHex(hex);
       hexRef.current = hex;
     };
+    const setApngInterval = (): (() => void) => {
+      if (!apngRef.current) return () => {};
+      const duration = apngRef.current.playTime / apngRef.current.frames.length;
+
+      const interval = setInterval(async () => {
+        const frame = apngRef.current.frames.shift();
+        await frame.createImage();
+        apngRef.current.frames.push(frame);
+        if (!mouseOver.current) {
+          setHex("#000000");
+          hexRef.current = "#000000";
+          return;
+        }
+        const hex = Utils.getElementHex(frame.imageElement, cursorPosition);
+        setHex(hex);
+        hexRef.current = hex;
+      }, duration);
+      return () => {
+        clearInterval(interval);
+      };
+    };
+    const clearApngInterval = setApngInterval();
     videoRef.current?.addEventListener("timeupdate", onTimeUpdate);
     getAndSetHex();
     return () => {
       videoRef.current?.removeEventListener("timeupdate", onTimeUpdate);
+      clearApngInterval?.();
     };
-  }, [videoRef.current, cursorPosition]);
+  }, [videoRef.current, apngRef.current, cursorPosition]);
   return (
     <div className={`${props.childProps.className} imageUtils-details`}>
       <Flex direction={Flex.Direction.HORIZONTAL} justify={Flex.Justify.BETWEEN}>

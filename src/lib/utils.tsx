@@ -25,18 +25,19 @@ export const getImageHex = (url: string, { x, y }: { x: number; y: number }): Pr
     img.src = url;
   });
 
-export const getVideoHex = (
-  videoElemment: HTMLVideoElement,
+export const getElementHex = (
+  elemment: HTMLVideoElement | HTMLImageElement,
   { x, y }: { x: number; y: number },
 ): string => {
   const canvas = document.createElement("canvas");
-  canvas.width = videoElemment.width;
-  canvas.height = videoElemment.height;
+  canvas.width = elemment.width;
+  canvas.height = elemment.height;
   const ctx = canvas.getContext("2d");
-  ctx.drawImage(videoElemment, 0, 0, videoElemment.width, videoElemment.height);
+  ctx.drawImage(elemment, 0, 0, elemment.width, elemment.height);
   const [R, G, B] = ctx.getImageData(x, y, 1, 1).data;
   return `#${((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1)}`;
 };
+
 export const getImageDimensions = (url: string): Promise<{ height: number; width: number }> =>
   new Promise<{ width: number; height: number }>((resolve, reject) => {
     const img = new Image();
@@ -169,7 +170,7 @@ export const mapMenuItem = (
 export default {
   ...util,
   getImageHex,
-  getVideoHex,
+  getElementHex,
   getImageDimensions,
   openIcon,
   openImageModal,

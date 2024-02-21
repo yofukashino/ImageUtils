@@ -8,6 +8,9 @@ dependencies:
   '@types/react':
     specifier: ^18.2.48
     version: 18.2.48
+  apng-js:
+    specifier: ^1.1.1
+    version: 1.1.1
   discord-types:
     specifier: ^1.3.3
     version: 1.3.3
@@ -1033,6 +1036,10 @@ packages:
       normalize-path: 3.0.0
       picomatch: 2.3.1
     dev: true
+
+  /apng-js@1.1.1:
+    resolution: {integrity: sha512-UWaloDssWCE8Bj0wipyNxEXPnMadYS0VAjghCLas5nKGqfiBMNdQJhg8Fawq2+jZ50IOM1feKwjiqPAC/bvKgg==}
+    dev: false
 
   /argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
