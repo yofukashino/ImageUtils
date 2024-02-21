@@ -1,22 +1,20 @@
 {
-    "id":  "dev.tharki.ImageUtils",
-    "name":  "ImageUtils",
-    "description":  "Image Utilities By Tharki because a certain someone didn\u0027t make it",
-    "author":  {
-                   "discordID":  "1121961711080050780",
-                   "name":  "Ahlawat",
-                   "github":  "Yofukashi-No"
-               },
-    "version":  "1.0.0",
-    "updater":  {
-                    "id":  "Yofukashi-No/ImageUtils",
-                    "type":  "github"
-                },
-    "license":  "MIT",
-    "type":  "replugged-plugin",
-    "renderer":  "src/index.ts",
-    "source":  "https://github.com/Yofukashi-No/ImageUtils",
-    "image":  [
-                  "https://i.imgur.com/14CNs3a.png?CHANGE-THIS-URL"
-              ]
+  "id": "dev.tharki.ImageUtils",
+  "name": "ImageUtils",
+  "description": "Image Utilities By Nanakusa because a certain someone didn't make it",
+  "author": {
+    "discordID": "1121961711080050780",
+    "name": "Ahlawat",
+    "github": "Yofukashi-No"
+  },
+  "version": "1.0.0",
+  "updater": {
+    "id": "Yofukashi-No/ImageUtils",
+    "type": "github"
+  },
+  "license": "MIT",
+  "type": "replugged-plugin",
+  "renderer": "src/index.ts",
+  "source": "https://github.com/Yofukashi-No/ImageUtils",
+  "image": "https://i.imgur.com/2HgeCgl.png"
 }
