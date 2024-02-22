@@ -45,17 +45,10 @@ export const getImageDimensions = (url: string): Promise<{ height: number; width
     img.onload = () => {
       const canvas = document.createElement("canvas") as HTMLCanvasElement;
       const ctx = canvas.getContext("2d");
-      const aspectRatio = img.width / img.height;
-      let newWidth = img.width;
-      let newHeight = img.height;
-      if (newHeight > 512) {
-        newHeight = 512;
-        newWidth = newHeight * aspectRatio;
-      }
-      canvas.width = newWidth;
-      canvas.height = newHeight;
-      ctx.drawImage(img, 0, 0, newWidth, newHeight);
-      const dimensions = { width: newWidth, height: newHeight };
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      const dimensions = { width: img.width, height: img.height };
       resolve(dimensions);
     };
     img.onerror = () => reject(new Error("Failed to load image"));
