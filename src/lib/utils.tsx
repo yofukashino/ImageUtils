@@ -6,25 +6,6 @@ import { ImageModalClasses, ImageModalModule, MaskedLink } from "./requiredModul
 import Types from "../types";
 import { defaultSettings } from "./consts";
 
-export const getImageHex = (url: string, { x, y }: { x: number; y: number }): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const img = new Image();
-    img.crossOrigin = "Anonymous";
-    img.onload = function () {
-      const canvas = document.createElement("canvas");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext("2d");
-      ctx.drawImage(img, 0, 0, img.width, img.height);
-      const [R, G, B] = ctx.getImageData(x, y, 1, 1).data;
-      resolve(`#${((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1)}`);
-    };
-    img.onerror = function () {
-      reject(new Error("Failed to load image"));
-    };
-    img.src = url;
-  });
-
 export const getElementHex = (
   elemment: HTMLVideoElement | HTMLImageElement,
   { x, y }: { x: number; y: number },
@@ -163,7 +144,6 @@ export const mapMenuItem = (
 
 export default {
   ...util,
-  getImageHex,
   getElementHex,
   getImageDimensions,
   openIcon,

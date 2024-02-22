@@ -113,13 +113,16 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
     };
   }, []);
   React.useEffect(() => {
-    const getAndSetHex = async (): Promise<void> => {
+    const getAndSetHex = (): void => {
       if (!mouseOver.current) {
         setHex("#000000");
         hexRef.current = "#000000";
         return;
       }
-      const hex = await Utils.getImageHex(props.src, cursorPosition);
+      const hex = Utils.getElementHex(
+        element.current?.querySelector("img:not(.imgUtils-lens>img)"),
+        cursorPosition,
+      );
       setHex(hex);
       hexRef.current = hex;
     };
