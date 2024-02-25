@@ -3,7 +3,9 @@ import { ImageModalModule } from "../lib/requiredModules";
 import ImageDetails from "../Components/ImageDetails";
 export default (): void => {
   PluginInjector.before(ImageModalModule, "ImageModal", (args) => {
-    const [{ renderLinkComponent: OriginalCompoennt, ...props }] = args;
+    const [
+      { renderLinkComponent: OriginalCompoennt, ...props } = { renderLinkComponent: () => null },
+    ] = args ?? [{}];
 
     if (!OriginalCompoennt || OriginalCompoennt?.toString?.()?.includes?.("childProps"))
       return args;

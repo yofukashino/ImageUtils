@@ -1,10 +1,10 @@
 import { util } from "replugged";
 import { modal as ModalUtils, React, toast as ToastUtils } from "replugged/common";
 import { ContextMenu, Modal } from "replugged/components";
-import { SettingValues } from "../index";
+import { PluginLogger, SettingValues, USRDB } from "../index";
 import { ImageModalClasses, ImageModalModule, MaskedLink } from "./requiredModules";
+import { USRBG_URL, defaultSettings } from "./consts";
 import Types from "../types";
-import { defaultSettings } from "./consts";
 
 export const getElementHex = (
   elemment: HTMLVideoElement | HTMLImageElement,
@@ -142,6 +142,15 @@ export const mapMenuItem = (
   };
 };
 
+export const loadUSRBD = async (): Promise<void> => {
+  const fetchStart = performance.now();
+  const USRBG_RESPONSE = await fetch(USRBG_URL);
+  const USRBG_JSON = await USRBG_RESPONSE.json();
+  for (const USRBG_ITEM of USRBG_JSON) USRDB.set(USRBG_ITEM.uid, USRBG_ITEM);
+  const fetchEnd = performance.now();
+  PluginLogger.log(`Loaded USRBG Database in ${(fetchEnd - fetchStart).toFixed(2)}ms.`);
+};
+
 export default {
   ...util,
   getElementHex,
@@ -149,4 +158,5 @@ export default {
   openIcon,
   openImageModal,
   mapMenuItem,
+  loadUSRBD,
 };

@@ -114,15 +114,15 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
   }, []);
   React.useEffect(() => {
     const getAndSetHex = (): void => {
+      const img = element.current?.querySelector("img:not(.imgUtils-lens>img)") as HTMLImageElement;
+      if (!img) return;
       if (!mouseOver.current) {
         setHex("#000000");
         hexRef.current = "#000000";
         return;
       }
-      const hex = Utils.getElementHex(
-        element.current?.querySelector("img:not(.imgUtils-lens>img)"),
-        cursorPosition,
-      );
+
+      const hex = Utils.getElementHex(img, cursorPosition);
       setHex(hex);
       hexRef.current = hex;
     };
