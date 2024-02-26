@@ -7,14 +7,16 @@ import { USRBG_URL, defaultSettings } from "./consts";
 import Types from "../types";
 
 export const getElementHex = (
-  elemment: HTMLVideoElement | HTMLImageElement,
+  element: HTMLVideoElement | HTMLImageElement,
   { x, y }: { x: number; y: number },
 ): string => {
   const canvas = document.createElement("canvas");
-  canvas.width = elemment.width;
-  canvas.height = elemment.height;
+  canvas.width = element.width;
+  canvas.height = element.height;
   const ctx = canvas.getContext("2d");
-  ctx.drawImage(elemment, 0, 0, elemment.width, elemment.height);
+  element.crossOrigin = "anonymous";
+  element.src = `${element.src}`;
+  ctx.drawImage(element, 0, 0, element.width, element.height);
   const [R, G, B] = ctx.getImageData(x, y, 1, 1).data;
   return `#${((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1)}`;
 };
@@ -22,7 +24,7 @@ export const getElementHex = (
 export const getImageDimensions = (url: string): Promise<{ height: number; width: number }> =>
   new Promise<{ width: number; height: number }>((resolve, reject) => {
     const img = new Image();
-    img.crossOrigin = "Anonymous";
+    img.crossOrigin = "anonymous";
     img.onload = () => {
       const canvas = document.createElement("canvas") as HTMLCanvasElement;
       const ctx = canvas.getContext("2d");
@@ -46,7 +48,7 @@ export const openImageModal = async (url: string, imgProps?: object): Promise<st
         original={url}
         placeholder={url}
         src={url}
-        children={(props) => <img {...props} src={url} {...dimensions} />}
+        children={(props) => <img {...props} src={url} crossOrigin="anonymous" {...dimensions} />}
         renderLinkComponent={(props) => <MaskedLink {...props} />}
         shouldHideMediaOptions={false}
         {...imgProps}

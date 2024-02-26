@@ -218,6 +218,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
           />
         ) : (
           <img
+            crossOrigin="anonymous"
             ref={imageRef}
             style={{
               position: "absolute",
