@@ -14,8 +14,10 @@ export const getElementHex = (
   canvas.width = element.width;
   canvas.height = element.height;
   const ctx = canvas.getContext("2d");
-  element.crossOrigin = "anonymous";
-  element.src = `${element.src}`;
+  if (element.crossOrigin != "anonymous") {
+    element.crossOrigin = "anonymous";
+    element.src = `${element.src}`;
+  }
   ctx.drawImage(element, 0, 0, element.width, element.height);
   const [R, G, B] = ctx.getImageData(x, y, 1, 1).data;
   return `#${((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1)}`;
