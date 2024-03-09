@@ -6,6 +6,7 @@ import { defaultSettings } from "../lib/consts";
 import Utils from "../lib/utils";
 import Types from "../types";
 import apngParse, { APNG } from "apng-js";
+import { decompressFrames, parseGIF } from "gifuct-js";
 export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => {
   const OriginalComponent = props.children.bind(null, props.childProps);
   const originalComponentRef = React.useRef(OriginalComponent);
@@ -14,10 +15,11 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
   const [dimensions, setDimensions] = React.useState("0x0");
   const [cursorPosition, setCursorPosition] = React.useState({ x: 0, y: 0 });
   const hexRef = React.useRef("#000000");
-  const mouseOver = React.useRef(false);
+  const [mouseOver, setMouseOver] = React.useState(false);
   const element = React.useRef<HTMLDivElement | null>(null);
   const videoRef = React.useRef<HTMLVideoElement | null>(null);
   const apngRef = React.useRef<APNG | null>(null);
+  const gifRef = React.useRef<{ duration: number; frames: HTMLImageElement[] } | null>(null);
   React.useEffect(() => {
     const elem = document.getElementById("image-utils-modal") as HTMLDivElement;
     element.current = elem;
@@ -57,7 +59,38 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       }
       apngRef.current = apng;
     };
+    const getAndSetGif = async (): Promise<void> => {
+      const imgBuffer = await fetch(props.src).then((response) => response.arrayBuffer());
+      const gif = decompressFrames(parseGIF(imgBuffer), true);
 
+      if (!gif.length) {
+        return;
+      }
+      const duration = gif.at(-1)?.delay;
+
+      const frames = gif.map((frame) => {
+        const canvas = document.createElement("canvas");
+        const ctx = canvas.getContext("2d");
+
+        canvas.width = frame.dims.width;
+        canvas.height = frame.dims.height;
+
+        const imageData = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
+
+        ctx.putImageData(imageData, 0, 0);
+        const img = new Image();
+        img.src = canvas.toDataURL();
+        img.crossOrigin = "anonymous";
+        return img;
+      });
+      while (
+        !element.current?.querySelector("img") &&
+        !element.current?.querySelector("video[class*=embedVideo]")
+      ) {
+        await Utils.sleep(100);
+      }
+      gifRef.current = { duration, frames };
+    };
     const onMouseMove = (e): void => {
       setCursorPosition({
         x:
@@ -91,10 +124,10 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       }
     };
     const onMouseOver = (): void => {
-      mouseOver.current = true;
+      setMouseOver(true);
     };
     const onMouseOut = (): void => {
-      mouseOver.current = false;
+      setMouseOver(false);
     };
 
     document.addEventListener("keydown", onKeyDown);
@@ -105,6 +138,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
     getAndSetDimensions();
     getAndSetHost();
     getAndSetApng();
+    getAndSetGif();
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       element.current.removeEventListener("mousemove", onMouseMove);
@@ -116,7 +150,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
     const getAndSetHex = (): void => {
       const img = element.current?.querySelector("img:not(.imgUtils-lens>img)") as HTMLImageElement;
       if (!img) return;
-      if (!mouseOver.current) {
+      if (!mouseOver) {
         setHex("#000000");
         hexRef.current = "#000000";
         return;
@@ -127,7 +161,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       hexRef.current = hex;
     };
     const onTimeUpdate = (): void => {
-      if (!mouseOver.current) {
+      if (!mouseOver) {
         setHex("#000000");
         hexRef.current = "#000000";
         return;
@@ -144,7 +178,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
         const frame = apngRef.current.frames.shift();
         await frame.createImage();
         apngRef.current.frames.push(frame);
-        if (!mouseOver.current) {
+        if (!mouseOver) {
           setHex("#000000");
           hexRef.current = "#000000";
           return;
@@ -157,14 +191,34 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
         clearInterval(interval);
       };
     };
-    const clearApngInterval = setApngInterval();
-    videoRef.current?.addEventListener("timeupdate", onTimeUpdate);
+    const setGifInterval = (): (() => void) => {
+      if (!gifRef.current) return () => {};
+      const interval = setInterval(() => {
+        const frame = gifRef.current.frames.shift();
+        gifRef.current.frames.push(frame);
+        if (!mouseOver) {
+          setHex("#000000");
+          hexRef.current = "#000000";
+          return;
+        }
+        const hex = Utils.getElementHex(frame, cursorPosition);
+        setHex(hex);
+        hexRef.current = hex;
+      }, gifRef.current.duration);
+      return () => {
+        clearInterval(interval);
+      };
+    };
     getAndSetHex();
+    const clearApngInterval = setApngInterval();
+    const clearGifInterval = setGifInterval();
+    videoRef.current?.addEventListener("timeupdate", onTimeUpdate);
     return () => {
       videoRef.current?.removeEventListener("timeupdate", onTimeUpdate);
       clearApngInterval?.();
+      clearGifInterval?.();
     };
-  }, [videoRef.current, apngRef.current, cursorPosition]);
+  }, [mouseOver, videoRef.current, apngRef.current, cursorPosition]);
   return (
     <div className={`${props.childProps.className} imageUtils-details`}>
       <Flex direction={Flex.Direction.HORIZONTAL} justify={Flex.Justify.BETWEEN}>

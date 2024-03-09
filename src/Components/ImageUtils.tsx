@@ -93,12 +93,25 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
     if (props.ready) {
       const elem = document.getElementById("image-utils-modal") as HTMLDivElement;
       element.current = elem;
+      const syncGifs = async (): Promise<void> => {
+        const gifs = elem?.querySelectorAll('img[src*=".gif"]') as NodeListOf<HTMLImageElement>;
+        for (const gif of gifs) {
+          const reader = new FileReader();
+          const blob = await fetch(props.src).then((response) => response.blob());
+          reader.onload = function () {
+            if (gif?.src && reader.result) gif.src = reader.result as string;
+          };
+          reader.readAsDataURL(blob);
+        }
+      };
+
       elem.querySelector("img,video")?.setAttribute("draggable", "false");
 
       setReady(true);
       originalComponentRef.current = OriginalComponent;
+      syncGifs();
     }
-  }, [props.ready]);
+  }, [props.ready, props.childProps]);
   React.useEffect(() => {
     const onTimeUpdate = (): void => {
       if (currentVideoElementRef.current && originalVideoElementRef.current)

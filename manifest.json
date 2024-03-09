@@ -4,17 +4,17 @@
   "description": "Image Utilities By Nanakusa because a certain someone didn't make it",
   "author": {
     "discordID": "1121961711080050780",
-    "name": "Ahlawat",
-    "github": "Yofukashi-No"
+    "name": "Nanakusa",
+    "github": "YofukashiNo"
   },
   "version": "1.0.2",
   "updater": {
-    "id": "Yofukashi-No/ImageUtils",
+    "id": "YofukashiNo/ImageUtils",
     "type": "github"
   },
   "license": "MIT",
   "type": "replugged-plugin",
   "renderer": "src/index.ts",
-  "source": "https://github.com/Yofukashi-No/ImageUtils",
+  "source": "https://github.com/YofukashiNo/ImageUtils",
   "image": "https://i.imgur.com/2HgeCgl.png"
 }

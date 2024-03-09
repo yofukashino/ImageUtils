@@ -33,16 +33,43 @@ export const getImageDimensions = (url: string): Promise<{ height: number; width
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0, img.width, img.height);
-      const dimensions = { width: img.width, height: img.height };
+      const dimensions = {
+        width: img.width,
+        height: img.height,
+      };
       resolve(dimensions);
     };
     img.onerror = () => reject(new Error("Failed to load image"));
     img.src = url;
   });
 
+export const resizeToFit = ({
+  width,
+  height,
+}: {
+  width: number;
+  height: number;
+}): { width: number; height: number } => {
+  const maxHeight = Math.min(Math.round(0.65 * window.innerHeight), 2e3);
+  const maxWidth = Math.min(Math.round(0.75 * window.innerWidth), 2e3);
+  if (width !== maxWidth || height !== maxHeight) {
+    const scaledWidth = width > maxWidth ? maxWidth / width : 1;
+    width = Math.max(Math.round(width * scaledWidth), 0);
+    height = Math.max(Math.round(height * scaledWidth), 0);
+    const scaledHeight = height > maxHeight ? maxHeight / height : 1;
+    width = Math.max(Math.round(width * scaledHeight), 0);
+    height = Math.max(Math.round(height * scaledHeight), 0);
+  }
+  return {
+    width,
+    height,
+  };
+};
+
 export const openImageModal = async (url: string, imgProps?: object): Promise<string> => {
   const { modal, image } = (await ImageModalClasses) ?? ({} as Types.ImageModalClasses);
   const dimensions = await getImageDimensions(url);
+
   return ModalUtils.openModal((props) => (
     <Modal.ModalRoot {...props} className={modal} size="dynamic">
       <ImageModalModule.ImageModal
@@ -50,7 +77,9 @@ export const openImageModal = async (url: string, imgProps?: object): Promise<st
         original={url}
         placeholder={url}
         src={url}
-        children={(props) => <img {...props} src={url} crossOrigin="anonymous" {...dimensions} />}
+        children={(props) => (
+          <img {...props} src={url} crossOrigin="anonymous" {...resizeToFit(dimensions)} />
+        )}
         renderLinkComponent={(props) => <MaskedLink {...props} />}
         shouldHideMediaOptions={false}
         {...imgProps}
@@ -159,6 +188,7 @@ export default {
   ...util,
   getElementHex,
   getImageDimensions,
+  resizeToFit,
   openIcon,
   openImageModal,
   mapMenuItem,
