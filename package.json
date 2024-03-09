@@ -1,6 +1,6 @@
 {
   "name": "image-utils",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Image Utilities By Tharki because a certain someone didn't make it",
   "engines": {
     "node": ">=20.0.0",
