@@ -14,7 +14,7 @@ export const getElementHex = (
   canvas.width = element.width;
   canvas.height = element.height;
   const ctx = canvas.getContext("2d");
-  if (element.crossOrigin != "anonymous") {
+  if (!element.src?.includes("blob") && element.crossOrigin != "anonymous") {
     element.crossOrigin = "anonymous";
     element.src = `${element.src}`;
   }
