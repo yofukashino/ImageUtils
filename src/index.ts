@@ -8,7 +8,7 @@ export const { utils: PluginInjectorUtils } = PluginInjector;
 export const PluginLogger = Logger.plugin("ImageUtils", "#b380ff");
 export const USRDB = new Map<string, Types.USRBD_USER>();
 
-export const SettingValues = await settings.init("dev.tharki.ImageUtils", defaultSettings);
+export const SettingValues = await settings.init("dev.yofukashino.ImageUtils", defaultSettings);
 
 import Injections from "./patches/index";
 import Utils from "./lib/utils";
