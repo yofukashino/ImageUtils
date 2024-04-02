@@ -1,7 +1,7 @@
 {
   "name": "image-utils",
   "version": "1.0.5",
-  "description": "Image Utilities By Tharki because a certain someone didn't make it",
+  "description": "Image Utilities By Nanakusa because a certain someone didn't make it",
   "engines": {
     "node": ">=20.0.0",
     "pnpm": ">=8.0.0"
