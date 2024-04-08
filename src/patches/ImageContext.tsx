@@ -127,7 +127,9 @@ export default (): void => {
                         />
                       )}
                       label={engine}
-                      action={() => open(`${engine}${encodeURIComponent(src)}`, "_blank")}
+                      action={() =>
+                        open(`${searchEngines[engine]}${encodeURIComponent(src)}`, "_blank")
+                      }
                     />
                   ))}
             </ContextMenu.MenuItem>
