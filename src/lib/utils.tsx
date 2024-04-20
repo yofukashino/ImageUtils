@@ -2,7 +2,7 @@ import { util } from "replugged";
 import { modal as ModalUtils, React, toast as ToastUtils } from "replugged/common";
 import { ContextMenu, Modal } from "replugged/components";
 import { PluginLogger, SettingValues, USRDB } from "../index";
-import { ImageModalClasses, ImageModalModule, MaskedLink } from "./requiredModules";
+import Modules from "./requiredModules";
 import { USRBG_URL, defaultSettings } from "./consts";
 import Types from "../types";
 
@@ -67,12 +67,12 @@ export const resizeToFit = ({
 };
 
 export const openImageModal = async (url: string, imgProps?: object): Promise<string> => {
-  const { modal, image } = (await ImageModalClasses) ?? ({} as Types.ImageModalClasses);
+  const { modal, image } = Modules.ImageModalClasses ?? {};
   const dimensions = await getImageDimensions(url);
 
   return ModalUtils.openModal((props) => (
     <Modal.ModalRoot {...props} className={modal} size="dynamic">
-      <ImageModalModule.ImageModal
+      <Modules.ImageModalModule.ImageModal
         className={image}
         original={url}
         placeholder={url}
@@ -80,7 +80,7 @@ export const openImageModal = async (url: string, imgProps?: object): Promise<st
         children={(props) => (
           <img {...props} src={url} crossOrigin="anonymous" {...resizeToFit(dimensions)} />
         )}
-        renderLinkComponent={(props) => <MaskedLink {...props} />}
+        renderLinkComponent={(props) => <Modules.MaskedLink {...props} />}
         shouldHideMediaOptions={false}
         {...imgProps}
         {...dimensions}

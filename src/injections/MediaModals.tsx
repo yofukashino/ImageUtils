@@ -1,9 +1,10 @@
 import { PluginInjector, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
-import { MediaModal } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import ImageUtils from "../Components/ImageUtils";
 import Types from "../types";
 export default (): void => {
+  const { MediaModal } = Modules;
   PluginInjector.after(
     MediaModal.default.prototype,
     "render",

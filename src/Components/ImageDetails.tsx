@@ -1,7 +1,6 @@
 import { React, toast as ToastUtils } from "replugged/common";
 import { Flex, Text } from "replugged/components";
 import { SettingValues } from "../index";
-import { DiscordNative } from "../lib/requiredModules";
 import { defaultSettings } from "../lib/consts";
 import Utils from "../lib/utils";
 import Types from "../types";

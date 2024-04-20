@@ -1,10 +1,11 @@
 import { PluginInjectorUtils, SettingValues } from "../index";
 import { ContextMenu } from "replugged/components";
-import { ApplicationStreamPreviewStore } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import Utils from "../lib/utils";
 import Types from "../types";
 import { defaultSettings } from "../lib/consts";
 export default (): void => {
+  const { ApplicationStreamPreviewStore } = Modules;
   PluginInjectorUtils.addMenuItem(
     Types.DefaultTypes.ContextMenuTypes.StreamContext,
     (

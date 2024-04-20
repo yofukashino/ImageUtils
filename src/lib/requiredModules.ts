@@ -1,26 +1,28 @@
 import { webpack } from "replugged";
 import Types from "../types";
 
-export const MediaModal = webpack.getByProps<Types.MediaModal>("IMAGE_GIF_RE");
+export const Modules: Types.Modules = {};
 
-export const IconUtils = webpack.getByProps<Types.IconUtils>("getUserAvatarURL");
+Modules.loadModules = async (): Promise<void> => {
+  Modules.MediaModal ??= await webpack.waitForProps<Types.MediaModal>("IMAGE_GIF_RE");
+  Modules.IconUtils ??= await webpack.waitForProps<Types.IconUtils>("getUserAvatarURL");
+  Modules.ImageModalClasses ??= await webpack.waitForModule<Types.ImageModalClasses>(
+    webpack.filters.bySource(/{image:.+,modal:.+?}/),
+  );
+  Modules.MaskedLink ??= await webpack.waitForModule<React.ComponentType<unknown>>(
+    webpack.filters.bySource("MASKED_LINK)"),
+  );
+  Modules.ImageModalModule ??= await webpack.waitForProps<Types.ImageModalModule>("ImageModal");
+  Modules.ApplicationStreamPreviewStore ??=
+    await webpack.waitForModule<Types.ApplicationStreamPreviewStore>(
+      webpack.filters.bySource('="ApplicationStreamPreviewStore"'),
+    );
+  Modules.GuildMemberStore ??= webpack.getByStoreName<Types.GuildMemberStore>("GuildMemberStore");
+  Modules.ApplicationStreamingStore ??= webpack.getByStoreName<Types.ApplicationStreamingStore>(
+    "ApplicationStreamingStore",
+  );
 
-export const ImageModalClasses =
-  webpack.getBySource<Types.ImageModalClasses>(/{image:.+,modal:.+?}/);
+  Modules.StickersStore ??= webpack.getByStoreName<Types.StickersStore>("StickersStore");
+};
 
-export const MaskedLink = webpack.getBySource<React.ComponentType<unknown>>("MASKED_LINK)");
-
-export const ImageModalModule = webpack.getByProps<Types.ImageModalModule>("ImageModal");
-
-export const GuildMemberStore = webpack.getByStoreName<Types.GuildMemberStore>("GuildMemberStore");
-
-export const ApplicationStreamingStore = webpack.getByStoreName<Types.ApplicationStreamingStore>(
-  "ApplicationStreamingStore",
-);
-
-export const ApplicationStreamPreviewStore =
-  webpack.getByStoreName<Types.ApplicationStreamPreviewStore>("ApplicationStreamPreviewStore");
-
-export const StickersStore = webpack.getByStoreName<Types.StickersStore>("StickersStore");
-
-export const DiscordNative = webpack.getByProps<Types.DiscordNative>("clipboard", "process");
+export default Modules;

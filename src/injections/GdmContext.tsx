@@ -1,14 +1,15 @@
 import { PluginInjectorUtils, SettingValues } from "../index";
 import { ContextMenu } from "replugged/components";
-import { StickersStore } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import Utils from "../lib/utils";
 import Types from "../types";
 import { defaultSettings } from "../lib/consts";
 export default (): void => {
+  const { IconUtils } = Modules;
   PluginInjectorUtils.addMenuItem(
-    Types.DefaultTypes.ContextMenuTypes.ExpressionPicker,
-    ({ target }: { target: HTMLElement }, menu) => {
-      if (!SettingValues.get("stickers", defaultSettings.stickers)) return;
+    Types.DefaultTypes.ContextMenuTypes.GdmContext,
+    ({ channel }: { channel: Types.Channel }, menu) => {
+      if (!SettingValues.get("gdm", defaultSettings.gdm)) return;
 
       menu.children = (menu?.children as React.ReactElement[]).filter(
         (c) =>
@@ -19,18 +20,23 @@ export default (): void => {
       const index = (menu?.children as React.ReactElement[]).findIndex(
         (c) => c.props.id === "replugged",
       );
-
       (menu?.children as React.ReactElement[])?.splice?.(
         index,
         0,
         <ContextMenu.MenuGroup label="Image Utils">
-          {target.getAttribute("data-type") === "sticker" &&
-          StickersStore.getStickerById(target.getAttribute("data-id"))?.format_type !== 3 ? (
+          {channel?.icon ? (
             <ContextMenu.MenuItem
-              id="imageUtils-sticker"
-              label="View"
+              id="imageUtils-gdmIcon"
+              label="View Icon"
               {...Utils.mapMenuItem(
-                `https://cdn.discordapp.com/stickers/${target.getAttribute("data-id")}.${StickersStore.getStickerById(target.getAttribute("data-id"))?.format_type === 1 ? "png" : "png?passtrough=true"}`,
+                IconUtils.default.getChannelIconURL(
+                  {
+                    id: channel?.id,
+                    icon: channel?.icon,
+                    canAnimate: true,
+                  },
+                  true,
+                ) as string,
               )}
             />
           ) : null}

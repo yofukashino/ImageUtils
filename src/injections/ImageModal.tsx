@@ -1,7 +1,8 @@
 import { PluginInjector } from "../index";
-import { ImageModalModule } from "../lib/requiredModules";
+import Modules from "../lib/requiredModules";
 import ImageDetails from "../Components/ImageDetails";
 export default (): void => {
+  const { ImageModalModule } = Modules;
   PluginInjector.before(ImageModalModule, "ImageModal", (args) => {
     const [
       { renderLinkComponent: OriginalCompoennt, ...props } = { renderLinkComponent: () => null },

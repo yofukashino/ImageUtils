@@ -64,6 +64,11 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
     setOpacity(1);
   };
   React.useEffect(() => {
+    const onMouseMove = (e): void => {
+      e.preventDefault();
+      e.stopPropagation();
+      lensChange(e);
+    };
     const onMouseUp = (e): void => {
       e.preventDefault();
       e.stopPropagation();
@@ -80,10 +85,12 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
         shiftDown.current = false;
       }
     };
+    document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("keydown", onKeyDown);
     document.addEventListener("keyup", onKeyUp);
     return () => {
+      document.removeEventListener("mousemove", onMouseMove);
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("keydown", onKeyDown);
       document.removeEventListener("keyup", onKeyUp);
@@ -182,11 +189,6 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
         e.preventDefault();
         e.stopPropagation();
         mouseOver.current = false;
-      }}
-      onMouseMove={(e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        lensChange(e);
       }}
       onMouseDown={(e) => {
         e.preventDefault();
