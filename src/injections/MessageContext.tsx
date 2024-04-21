@@ -18,7 +18,7 @@ export default (): void => {
       );
 
       const index = (menu?.children as React.ReactElement[]).findIndex(
-        (c) => c.props.id === "replugged",
+        (c) => c?.props?.id === "replugged",
       );
 
       (menu?.children as React.ReactElement[])?.splice?.(
@@ -27,12 +27,12 @@ export default (): void => {
         <ContextMenu.MenuGroup label="Image Utils">
           {message?.stickerItems?.length
             ? message?.stickerItems.map((sticker) =>
-                StickersStore.getStickerById(sticker.id)?.format_type === 3 ? null : (
+                StickersStore.getStickerById(sticker?.id)?.format_type === 3 ? null : (
                   <ContextMenu.MenuItem
                     id="imageUtils-sticker"
                     label={`View ${sticker.name}`}
                     {...Utils.mapMenuItem(
-                      `https://cdn.discordapp.com/stickers/${sticker.id}.${StickersStore.getStickerById(sticker.id)?.format_type === 1 ? "png" : "png?passtrough=true"}`,
+                      `https://cdn.discordapp.com/stickers/${sticker?.id}.${StickersStore.getStickerById(sticker?.id)?.format_type === 1 ? "png" : "png?passtrough=true"}`,
                     )}
                   />
                 ),
