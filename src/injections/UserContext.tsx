@@ -33,7 +33,7 @@ export default (): void => {
       stream?.ownerId,
     ) as string;
     const index = (menu?.children as React.ReactElement[]).findIndex(
-      (c) => c.props.id === "replugged",
+      (c) => c?.props?.id === "replugged",
     );
     (menu?.children as React.ReactElement[])?.splice?.(
       index,

@@ -21,7 +21,6 @@ export default (): void => {
       },
       menu,
     ) => {
-      console.log(stream);
       if (!SettingValues.get("stream", defaultSettings.stream)) return;
 
       menu.children = (menu?.children as React.ReactElement[]).filter(
