@@ -7,7 +7,7 @@
     "name": "Nanakusa",
     "github": "YofukashiNo"
   },
-  "version": "1.0.7",
+  "version": "1.0.8",
   "updater": {
     "id": "YofukashiNo/ImageUtils",
     "type": "github"
