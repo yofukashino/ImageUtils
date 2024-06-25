@@ -44,7 +44,7 @@ export default (): void => {
             id="imageUtils-userAvatar"
             label="View Avatar"
             {...Utils.mapMenuItem(
-              IconUtils.default.getUserAvatarURL(
+              IconUtils.getUserAvatarURL(
                 {
                   id: user?.id,
                   avatar: user?.avatar,
@@ -59,32 +59,28 @@ export default (): void => {
           <ContextMenu.MenuItem
             id="imageUtils-userBanner"
             label="View Banner"
-            {...Utils.mapMenuItem(IconUtils.default.getUserBannerURL(user, true) as string)}
+            {...Utils.mapMenuItem(IconUtils.getUserBannerURL(user, true) as string)}
           />
         ) : null}
         {member?.avatar ? (
           <ContextMenu.MenuItem
             id="imageUtils-memberAvatar"
             label="View Guild Member Avatar"
-            {...Utils.mapMenuItem(
-              IconUtils.default.getGuildMemberAvatarURL(member, true) as string,
-            )}
+            {...Utils.mapMenuItem(IconUtils.getGuildMemberAvatarURL(member, true) as string)}
           />
         ) : null}
         {member?.banner ? (
           <ContextMenu.MenuItem
             id="imageUtils-memberBanner"
             label="View Guild Member Banner"
-            {...Utils.mapMenuItem(
-              IconUtils.default.getGuildMemberBannerURL(member, true) as string,
-            )}
+            {...Utils.mapMenuItem(IconUtils.getGuildMemberBannerURL(member, true) as string)}
           />
         ) : null}
-        {usrbg?.img ? (
+        {usrbg ? (
           <ContextMenu.MenuItem
             id="imageUtils-usrBg"
             label="View USRBG Banner"
-            {...Utils.mapMenuItem(usrbg.img)}
+            {...Utils.mapMenuItem(usrbg)}
           />
         ) : null}
         {streamPreviewUrl ? (
@@ -103,6 +99,10 @@ export default (): void => {
   );
   PluginInjectorUtils.addMenuItem(
     Types.DefaultTypes.ContextMenuTypes.UserProfileActions,
+    ContextMenuEntry,
+  );
+  PluginInjectorUtils.addMenuItem(
+    Types.DefaultTypes.ContextMenuTypes.UserProfileOverflowMenu,
     ContextMenuEntry,
   );
 };

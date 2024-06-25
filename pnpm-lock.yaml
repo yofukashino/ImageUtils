@@ -46,8 +46,8 @@ importers:
         specifier: ^3.2.2
         version: 3.2.2
       replugged:
-        specifier: ^4.7.9
-        version: 4.7.9(@codemirror/view@6.23.0)(@lezer/common@1.2.0)
+        specifier: 4.7.13
+        version: 4.7.13(@codemirror/view@6.23.0)(@lezer/common@1.2.0)
       typescript:
         specifier: ^5.3.3
         version: 5.3.3
@@ -1049,6 +1049,7 @@ packages:
 
   glob@7.2.3:
     resolution: {integrity: sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==}
+    deprecated: Glob versions prior to v9 are no longer supported
 
   global-dirs@3.0.1:
     resolution: {integrity: sha512-NBcGGFbBA9s1VzD41QXDG+3++t9Mn5t1FpLdhESY6oKY4gYTFpX4wO3sqGUa0Srjtbfj3szX0RnemmrVRUdULA==}
@@ -1140,6 +1141,7 @@ packages:
 
   inflight@1.0.6:
     resolution: {integrity: sha512-k92I/b08q4wvFscXCLvqfsHCrjrF7yiXsQuIVvVE7N82W3+aqpzuUdBbfhWcy/FZR3/4IgflMgKLOsvPDrGCJA==}
+    deprecated: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -1538,9 +1540,9 @@ packages:
     resolution: {integrity: sha512-+crtS5QjFRqFCoQmvGduwYWEBng99ZvmFvF+cUJkGYF1L1BfU8C6Zp9T7f5vPAwyLkUExpvK+ANVZmGU49qi4Q==}
     engines: {node: '>=12'}
 
-  replugged@4.7.9:
-    resolution: {integrity: sha512-Eh44KEzXVLRO7UtrZm5mvYXr12KJV4zpifYUEFlNoGaT9mzO598f8WgiMdCQdaUf27bZl+nk6qUngMR4YfkXoA==}
-    engines: {node: '>=18.0.0', pnpm: '>=8.0.0'}
+  replugged@4.7.13:
+    resolution: {integrity: sha512-SZn3N5hNX19dzCHpOFUqyXnZoAyZoOYlq8zlY4b5Iq0xy+t+QKPM1TMO4gN1Tb/8l8IS7zb8pDrE1A561PYeLQ==}
+    engines: {node: '>=21.0.0', pnpm: '>=9.0.0'}
     hasBin: true
 
   require-directory@2.1.1:
@@ -3428,7 +3430,7 @@ snapshots:
     dependencies:
       rc: 1.2.8
 
-  replugged@4.7.9(@codemirror/view@6.23.0)(@lezer/common@1.2.0):
+  replugged@4.7.13(@codemirror/view@6.23.0)(@lezer/common@1.2.0):
     dependencies:
       '@codemirror/lang-css': 6.2.1(@codemirror/view@6.23.0)
       '@codemirror/language': 6.10.0

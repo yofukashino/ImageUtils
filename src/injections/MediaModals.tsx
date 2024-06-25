@@ -1,12 +1,19 @@
+import { webpack } from "replugged";
 import { PluginInjector, SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
 import Modules from "../lib/requiredModules";
 import ImageUtils from "../Components/ImageUtils";
 import Types from "../types";
+
 export default (): void => {
   const { MediaModal } = Modules;
+  const Image = webpack.getFunctionBySource<Types.DefaultTypes.AnyFunction>(
+    MediaModal,
+    "handleImageLoad",
+  );
+
   PluginInjector.after(
-    MediaModal.default.prototype,
+    Image.prototype,
     "render",
     (_args, res, instance: Types.MediaModalsInstance) => {
       if (!res?.props || res?.props?.zoomable || res?.props?.alt === "Video") return res;

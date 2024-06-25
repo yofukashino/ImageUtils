@@ -31,7 +31,7 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-react": "^7.33.2",
     "prettier": "^3.2.2",
-    "replugged": "^4.7.9",
+    "replugged": "4.7.13",
     "typescript": "^5.3.3",
     "@types/react": "^18.2.48",
     "discord-types": "^1.3.3"

@@ -29,7 +29,7 @@ export default (): void => {
               id="imageUtils-gdmIcon"
               label="View Icon"
               {...Utils.mapMenuItem(
-                IconUtils.default.getChannelIconURL(
+                IconUtils.getChannelIconURL(
                   {
                     id: channel?.id,
                     icon: channel?.icon,

@@ -64,55 +64,40 @@ export namespace Types {
     ready: boolean;
   }
   export interface IconUtils {
-    DEFAULT_AVATARS: string[];
-    SUPPORTS_WEBP: boolean;
-    default: {
-      getAnimatableSourceWithFallback: DefaultTypes.AnyFunction;
-      getApplicationIconSource: DefaultTypes.AnyFunction;
-      getApplicationIconURL: DefaultTypes.AnyFunction;
-      getAvatarDecorationURL: DefaultTypes.AnyFunction;
-      getChannelIconSource: DefaultTypes.AnyFunction;
-      getChannelIconURL: DefaultTypes.AnyFunction;
-      getDefaultAvatarURL: DefaultTypes.AnyFunction;
-      getEmojiURL: DefaultTypes.AnyFunction;
-      getGameAssetSource: DefaultTypes.AnyFunction;
-      getGameAssetURL: DefaultTypes.AnyFunction;
-      getGuildBannerSource: DefaultTypes.AnyFunction;
-      getGuildBannerURL: DefaultTypes.AnyFunction;
-      getGuildDiscoverySplashSource: DefaultTypes.AnyFunction;
-      getGuildDiscoverySplashURL: DefaultTypes.AnyFunction;
-      getGuildHomeHeaderSource: DefaultTypes.AnyFunction;
-      getGuildHomeHeaderURL: DefaultTypes.AnyFunction;
-      getGuildIconSource: DefaultTypes.AnyFunction;
-      getGuildIconURL: DefaultTypes.AnyFunction;
-      getGuildMemberAvatarSource: DefaultTypes.AnyFunction;
-      getGuildMemberAvatarURL: DefaultTypes.AnyFunction;
-      getGuildMemberAvatarURLSimple: DefaultTypes.AnyFunction;
-      getGuildMemberBannerURL: DefaultTypes.AnyFunction;
-      getGuildSplashSource: DefaultTypes.AnyFunction;
-      getGuildSplashURL: DefaultTypes.AnyFunction;
-      getGuildTemplateIconSource: DefaultTypes.AnyFunction;
-      getGuildTemplateIconURL: DefaultTypes.AnyFunction;
-      getUserAvatarColor: DefaultTypes.AnyFunction;
-      getUserAvatarSource: DefaultTypes.AnyFunction;
-      getUserAvatarURL: DefaultTypes.AnyFunction;
-      getUserBannerURL: DefaultTypes.AnyFunction;
-      getVideoFilterAssetURL: DefaultTypes.AnyFunction;
-      hasAnimatedGuildIcon: DefaultTypes.AnyFunction;
-      isAnimatedIconHash: DefaultTypes.AnyFunction;
-      makeSource: DefaultTypes.AnyFunction;
-    };
+    getAnimatableSourceWithFallback: DefaultTypes.AnyFunction;
+    getApplicationIconSource: DefaultTypes.AnyFunction;
+    getApplicationIconURL: DefaultTypes.AnyFunction;
     getAvatarDecorationURL: DefaultTypes.AnyFunction;
+    getChannelIconSource: DefaultTypes.AnyFunction;
+    getChannelIconURL: DefaultTypes.AnyFunction;
+    getDefaultAvatarURL: DefaultTypes.AnyFunction;
     getEmojiURL: DefaultTypes.AnyFunction;
+    getGameAssetSource: DefaultTypes.AnyFunction;
+    getGameAssetURL: DefaultTypes.AnyFunction;
+    getGuildBannerSource: DefaultTypes.AnyFunction;
+    getGuildBannerURL: DefaultTypes.AnyFunction;
+    getGuildDiscoverySplashSource: DefaultTypes.AnyFunction;
+    getGuildDiscoverySplashURL: DefaultTypes.AnyFunction;
+    getGuildHomeHeaderSource: DefaultTypes.AnyFunction;
+    getGuildHomeHeaderURL: DefaultTypes.AnyFunction;
+    getGuildIconSource: DefaultTypes.AnyFunction;
+    getGuildIconURL: DefaultTypes.AnyFunction;
+    getGuildMemberAvatarSource: DefaultTypes.AnyFunction;
     getGuildMemberAvatarURL: DefaultTypes.AnyFunction;
     getGuildMemberAvatarURLSimple: DefaultTypes.AnyFunction;
     getGuildMemberBannerURL: DefaultTypes.AnyFunction;
+    getGuildSplashSource: DefaultTypes.AnyFunction;
+    getGuildSplashURL: DefaultTypes.AnyFunction;
+    getGuildTemplateIconSource: DefaultTypes.AnyFunction;
+    getGuildTemplateIconURL: DefaultTypes.AnyFunction;
+    getUserAvatarColor: DefaultTypes.AnyFunction;
+    getUserAvatarSource: DefaultTypes.AnyFunction;
     getUserAvatarURL: DefaultTypes.AnyFunction;
     getUserBannerURL: DefaultTypes.AnyFunction;
     getVideoFilterAssetURL: DefaultTypes.AnyFunction;
+    hasAnimatedGuildIcon: DefaultTypes.AnyFunction;
     isAnimatedIconHash: DefaultTypes.AnyFunction;
-    isAnimatedImageURL: DefaultTypes.AnyFunction;
-    isVideoAssetHash: DefaultTypes.AnyFunction;
+    makeSource: DefaultTypes.AnyFunction;
   }
   export interface ImageModalClasses {
     image: string;
@@ -212,11 +197,6 @@ export namespace Types {
     unusualDMActivityUntil?: string;
     userId?: string;
     banner?: string;
-  }
-  export interface USRBD_USER {
-    img: string;
-    uid: string;
-    _id: string;
   }
   export interface Modules {
     loadModules?: () => Promise<void>;

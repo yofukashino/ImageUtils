@@ -1,5 +1,5 @@
-export const USRBG_URL =
-  "https://raw.githubusercontent.com/Discord-Custom-Covers/usrbg/master/dist/usrbg.json";
+// got link from https://github.com/Rico040/bunny-plugins/blob/master/plugins/userbg/src/index.tsx#L23C40-L23C76
+export const USRBG_URL = "https://usrbg.is-hardly.online/users";
 export const defaultSettings = {
   hideLens: false,
   darkenImage: true,

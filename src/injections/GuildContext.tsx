@@ -31,7 +31,7 @@ export default (): void => {
             id="imageUtils-guildIcon"
             label="View Icon"
             {...Utils.mapMenuItem(
-              IconUtils.default.getGuildIconURL({
+              IconUtils.getGuildIconURL({
                 id: guild?.id,
                 icon: guild?.icon,
                 canAnimate: true,
@@ -44,7 +44,7 @@ export default (): void => {
             id="imageUtils-guildBanner"
             label="View Banner"
             {...Utils.mapMenuItem(
-              IconUtils.default.getGuildBannerURL(
+              IconUtils.getGuildBannerURL(
                 {
                   id: guild?.id,
                   banner: guild?.banner,
@@ -59,7 +59,7 @@ export default (): void => {
           <ContextMenu.MenuItem
             id="imageUtils-guildSplash"
             label="View Splash"
-            {...Utils.mapMenuItem(IconUtils.default.getGuildSplashURL(guild, true) as string)}
+            {...Utils.mapMenuItem(IconUtils.getGuildSplashURL(guild, true) as string)}
           />
         ) : null}
       </ContextMenu.MenuGroup>,

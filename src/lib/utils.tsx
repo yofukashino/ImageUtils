@@ -1,4 +1,4 @@
-import { util } from "replugged";
+import { util, webpack } from "replugged";
 import { modal as ModalUtils, React, toast as ToastUtils } from "replugged/common";
 import { ContextMenu, Modal } from "replugged/components";
 import { PluginLogger, SettingValues, USRDB } from "../index";
@@ -69,10 +69,13 @@ export const resizeToFit = ({
 export const openImageModal = async (url: string, imgProps?: object): Promise<string> => {
   const { modal, image } = Modules.ImageModalClasses ?? {};
   const dimensions = await getImageDimensions(url);
-
+  const ImageModal = webpack.getFunctionBySource<Types.ImageModalModule["ImageModal"]>(
+    Modules.ImageModalModule,
+    ".MEDIA_MODAL_CLOSE,",
+  );
   return ModalUtils.openModal((props) => (
     <Modal.ModalRoot {...props} className={modal} size="dynamic">
-      <Modules.ImageModalModule.ImageModal
+      <ImageModal
         className={image}
         original={url}
         placeholder={url}
@@ -81,6 +84,7 @@ export const openImageModal = async (url: string, imgProps?: object): Promise<st
           <img {...props} src={url} crossOrigin="anonymous" {...resizeToFit(dimensions)} />
         )}
         renderLinkComponent={(props) => <Modules.MaskedLink {...props} />}
+        renderForwardComponent={() => null}
         shouldHideMediaOptions={false}
         {...imgProps}
         {...dimensions}
@@ -123,7 +127,8 @@ export const mapMenuItem = (
           duration: 5000,
         }),
     };
-  if (url?.includes("discordapp.com/streams")) return { action: () => openIcon(url) };
+  if (url?.includes("discordapp.com/streams") || url?.includes("usrbg.is-hardly.online/usrbg"))
+    return { action: () => openIcon(url) };
   const animated = url?.includes("gif");
   const formats = url?.includes("discordapp.com/stickers")
     ? ["png"]
@@ -175,13 +180,21 @@ export const mapMenuItem = (
   };
 };
 
-export const loadUSRBD = async (): Promise<void> => {
+export const loadUSRBD = async (reload?: boolean): Promise<void> => {
   const fetchStart = performance.now();
   const USRBG_RESPONSE = await fetch(USRBG_URL);
   const USRBG_JSON = await USRBG_RESPONSE.json();
-  for (const USRBG_ITEM of USRBG_JSON) USRDB.set(USRBG_ITEM.uid, USRBG_ITEM);
+  for (const [USRBG_USERID, USRBG_ETAG] of Object.entries(USRBG_JSON.users))
+    USRDB.set(
+      USRBG_USERID,
+      `${USRBG_JSON.endpoint}/${USRBG_JSON.bucket}/${USRBG_JSON.prefix}${USRBG_USERID}?${
+        USRBG_ETAG as string
+      }`,
+    );
   const fetchEnd = performance.now();
-  PluginLogger.log(`Loaded USRBG Database in ${(fetchEnd - fetchStart).toFixed(2)}ms.`);
+  PluginLogger.log(
+    `${reload ? "Reloaded" : "Loaded"} USRBG Database in ${(fetchEnd - fetchStart).toFixed(2)}ms.`,
+  );
 };
 
 export default {

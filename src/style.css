@@ -26,7 +26,7 @@ div:has(.imgUtils-lens[style*="opacity: 1"]) .imageUtils-backdrop {
   position: unset !important;
   line-height: unset !important;
 }
-
+div:has(> .imageUtils-details),
 .imageUtils-details {
   position: unset !important;
   display: unset !important;
