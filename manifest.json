@@ -7,10 +7,10 @@
     "name": "Nanakusa",
     "github": "YofukashiNo"
   },
-  "version": "1.0.9",
+  "version": "1.0.8",
   "updater": {
-    "id": "dev.yofukashino.ImageUtils",
-    "type": "store"
+    "id": "YofukashiNo/ImageUtils",
+    "type": "github"
   },
   "license": "MIT",
   "type": "replugged-plugin",
