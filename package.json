@@ -1,6 +1,6 @@
 {
   "name": "image-utils",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Image Utilities By Nanakusa because a certain someone didn't make it",
   "engines": {
     "node": ">=20.0.0",

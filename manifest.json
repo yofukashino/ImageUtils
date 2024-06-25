@@ -7,7 +7,7 @@
     "name": "Nanakusa",
     "github": "YofukashiNo"
   },
-  "version": "1.0.8",
+  "version": "1.0.9",
   "updater": {
     "id": "dev.yofukashino.ImageUtils",
     "type": "store"
