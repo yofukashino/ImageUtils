@@ -5,7 +5,7 @@ export const Modules: Types.Modules = {};
 
 Modules.loadModules = async (): Promise<void> => {
   Modules.MediaModal ??= await webpack
-    .waitForModule<Types.MediaModal>(webpack.filters.bySource("/\\.gif($|\\?|#)/i"), {
+    .waitForModule<Types.MediaModal>(webpack.filters.bySource("/\\.(gif|webp)($|\\?|#)/i"), {
       timeout: 10000,
     })
     .catch(() => {
@@ -17,7 +17,7 @@ Modules.loadModules = async (): Promise<void> => {
       timeout: 10000,
     })
     .catch(() => {
-      throw new Error("Failed To Find .IconUtils Module");
+      throw new Error("Failed To Find IconUtils Module");
     });
 
   Modules.ImageModalClasses ??= await webpack

@@ -5,16 +5,16 @@
   "author": {
     "discordID": "1121961711080050780",
     "name": "Nanakusa",
-    "github": "YofukashiNo"
+    "github": "yofukashino"
   },
   "version": "1.0.9",
   "updater": {
-    "id": "YofukashiNo/ImageUtils",
+    "id": "yofukashino/ImageUtils",
     "type": "github"
   },
   "license": "MIT",
   "type": "replugged-plugin",
   "renderer": "src/index.ts",
-  "source": "https://github.com/YofukashiNo/ImageUtils",
+  "source": "https://github.com/yofukashino/ImageUtils",
   "image": "https://i.imgur.com/2HgeCgl.png"
 }
