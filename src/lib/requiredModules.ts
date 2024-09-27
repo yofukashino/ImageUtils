@@ -44,10 +44,17 @@ Modules.loadModules = async (): Promise<void> => {
       throw new Error("Failed To Find ImageModalModule Module");
     });
 
-  Modules.ApplicationStreamPreviewStore ??=
-    await webpack.waitForModule<Types.ApplicationStreamPreviewStore>(
-      webpack.filters.bySource('="ApplicationStreamPreviewStore"'),
-    );
+  Modules.ApplicationStreamPreviewStore ??= await webpack
+    .waitForModule<Types.ApplicationStreamPreviewStore>(
+      webpack.filters.bySource('","ApplicationStreamPreviewStore"'),
+      {
+        timeout: 10000,
+      },
+    )
+    .catch(() => {
+      throw new Error("Failed To Find ApplicationStreamPreviewStore Module");
+    });
+
   Modules.GuildMemberStore ??= webpack.getByStoreName<Types.GuildMemberStore>("GuildMemberStore");
   Modules.ApplicationStreamingStore ??= webpack.getByStoreName<Types.ApplicationStreamingStore>(
     "ApplicationStreamingStore",
