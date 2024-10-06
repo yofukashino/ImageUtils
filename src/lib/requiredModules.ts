@@ -5,7 +5,7 @@ export const Modules: Types.Modules = {};
 
 Modules.loadModules = async (): Promise<void> => {
   Modules.MediaModal ??= await webpack
-    .waitForModule<Types.MediaModal>(webpack.filters.bySource("/\\.(gif|webp)($|\\?|#)/i"), {
+    .waitForModule<Types.MediaModal>(webpack.filters.bySource("/\\.gif($|\\?|#)/i"), {
       timeout: 10000,
     })
     .catch(() => {
@@ -46,7 +46,7 @@ Modules.loadModules = async (): Promise<void> => {
 
   Modules.ApplicationStreamPreviewStore ??= await webpack
     .waitForModule<Types.ApplicationStreamPreviewStore>(
-      webpack.filters.bySource('","ApplicationStreamPreviewStore"'),
+      webpack.filters.bySource('="ApplicationStreamPreviewStore"'),
       {
         timeout: 10000,
       },
