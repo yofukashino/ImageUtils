@@ -67,27 +67,26 @@ export const resizeToFit = ({
 };
 
 export const openImageModal = async (url: string, imgProps?: object): Promise<string> => {
-  const { modal, image } = Modules.ImageModalClasses ?? {};
+  const { modal } = Modules.ImageModalClasses ?? {};
   const dimensions = await getImageDimensions(url);
   const ImageModal = webpack.getFunctionBySource<Types.ImageModalModule["ImageModal"]>(
     Modules.ImageModalModule,
-    ".MEDIA_MODAL_CLOSE,",
+    ".Messages.OPEN_IN_BROWSER",
   );
+
   return ModalUtils.openModal((props) => (
     <Modal.ModalRoot {...props} className={modal} size="dynamic">
       <ImageModal
-        className={image}
-        original={url}
-        placeholder={url}
-        src={url}
-        children={(props) => (
-          <img {...props} src={url} crossOrigin="anonymous" {...resizeToFit(dimensions)} />
-        )}
-        renderLinkComponent={(props) => <Modules.MaskedLink {...props} />}
-        renderForwardComponent={() => null}
-        shouldHideMediaOptions={false}
-        {...imgProps}
-        {...dimensions}
+        items={[
+          {
+            url,
+            original: url,
+            zoomThumbnailPlaceholder: url,
+            type: "IMAGE",
+            ...imgProps,
+            ...dimensions,
+          },
+        ]}
       />
     </Modal.ModalRoot>
   ));

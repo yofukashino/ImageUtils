@@ -36,6 +36,7 @@ div:has(> .imageUtils-details),
 .imageUtils-detailsText {
   font-size: 14px;
   font-weight: 500;
+  opacity: 0.5;
   align-content: end;
   text-align: right;
 }

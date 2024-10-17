@@ -63,6 +63,11 @@ export namespace Types {
     childProps: OriginalCompoenntProps;
     ready: boolean;
   }
+
+  export interface ImageDetailsProps {
+    children: React.ReactElement[] | React.ReactElement;
+    src: string;
+  }
   export interface IconUtils {
     getAnimatableSourceWithFallback: DefaultTypes.AnyFunction;
     getApplicationIconSource: DefaultTypes.AnyFunction;
@@ -107,14 +112,15 @@ export namespace Types {
     ImageModal: DefaultTypes.AnyFunction &
       React.ComponentType<
         Partial<{
-          className: string;
-          original: string;
-          placeholder: string;
-          src: string;
-          children: (...args: unknown[]) => React.ReactElement;
-          renderLinkComponent: (...args: unknown[]) => React.ReactElement;
-          shouldHideMediaOption: boolean;
-          shouldAnimate: boolean;
+          items: Array<{
+            className: string;
+            original: string;
+            zoomThumbnailPlaceholder: string;
+            type: string;
+            src: string;
+            children?: (...args: unknown[]) => React.ReactElement;
+            shouldHideMediaOption: boolean;
+          }>;
         }>
       >;
   }

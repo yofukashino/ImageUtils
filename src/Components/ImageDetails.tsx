@@ -6,9 +6,7 @@ import Utils from "../lib/utils";
 import Types from "../types";
 import apngParse, { APNG } from "apng-js";
 import { decompressFrames, parseGIF } from "gifuct-js";
-export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => {
-  const OriginalComponent = props.children.bind(null, props.childProps);
-  const originalComponentRef = React.useRef(OriginalComponent);
+export default React.memo((props: Types.ImageDetailsProps): React.ReactElement => {
   const [host, setHost] = React.useState(location.host);
   const [hex, setHex] = React.useState("#000000");
   const [dimensions, setDimensions] = React.useState("0x0");
@@ -23,7 +21,6 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
     const elem = document.getElementById("image-utils-modal") as HTMLDivElement;
     element.current = elem;
 
-    originalComponentRef.current = OriginalComponent;
     const waitForVideo = async (): Promise<void> => {
       while (
         !element.current?.querySelector("img") &&
@@ -144,7 +141,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       element.current.removeEventListener("mouseover", onMouseOver);
       element.current.removeEventListener("mouseout", onMouseOut);
     };
-  }, []);
+  }, [props.src]);
   React.useEffect(() => {
     const getAndSetHex = (): void => {
       const img = element.current?.querySelector("img:not(.imgUtils-lens>img)") as HTMLImageElement;
@@ -219,9 +216,11 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
     };
   }, [mouseOver, videoRef.current, apngRef.current, cursorPosition]);
   return (
-    <div className={`${props.childProps.className} imageUtils-details`}>
+    <div className={`imageUtils-details`}>
       <Flex direction={Flex.Direction.HORIZONTAL} justify={Flex.Justify.BETWEEN}>
-        {originalComponentRef.current()}
+        <Flex direction={Flex.Direction.VERTICAL} justify={Flex.Justify.BETWEEN}>
+          {props.children}
+        </Flex>
         <span>
           <Flex
             direction={Flex.Direction.VERTICAL}

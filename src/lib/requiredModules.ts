@@ -21,7 +21,7 @@ Modules.loadModules = async (): Promise<void> => {
     });
 
   Modules.ImageModalClasses ??= await webpack
-    .waitForModule<Types.ImageModalClasses>(webpack.filters.bySource(/{modal:.+?,image:.+?}/), {
+    .waitForModule<Types.ImageModalClasses>(webpack.filters.bySource(/{modal:.+?}/), {
       timeout: 10000,
     })
     .catch(() => {
@@ -37,9 +37,14 @@ Modules.loadModules = async (): Promise<void> => {
     });
 
   Modules.ImageModalModule ??= await webpack
-    .waitForModule<Types.ImageModalModule>(webpack.filters.bySource(".MEDIA_MODAL_CLOSE,"), {
-      timeout: 10000,
-    })
+    .waitForModule<{ exports: Types.ImageModalModule }>(
+      webpack.filters.bySource(".Messages.OPEN_IN_BROWSER"),
+      {
+        timeout: 10000,
+        raw: true,
+      },
+    )
+    .then(({ exports }) => exports)
     .catch(() => {
       throw new Error("Failed To Find ImageModalModule Module");
     });
