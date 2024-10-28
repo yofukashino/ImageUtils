@@ -5,12 +5,9 @@ import ImageDetails from "../Components/ImageDetails";
 import Utils from "../lib/utils";
 import Types from "../types";
 
-export default (): void => {
-  const { ImageModalModule } = Modules;
-  const ImageModal = webpack.getFunctionKeyBySource(
-    Modules.ImageModalModule,
-    ".Messages.OPEN_IN_BROWSER",
-  );
+export default async (): Promise<void> => {
+  const ImageModalModule = await Modules.ImageModalModulePromise;
+  const ImageModal = webpack.getFunctionKeyBySource(ImageModalModule, ".Messages.OPEN_IN_BROWSER");
 
   PluginInjector.after(ImageModalModule, ImageModal, (_args, res: Types.ReactTree) => {
     const container = Utils.findInReactTree(

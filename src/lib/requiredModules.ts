@@ -36,11 +36,21 @@ Modules.loadModules = async (): Promise<void> => {
       throw new Error("Failed To Find MaskedLink Module");
     });
 
-  Modules.ImageModalModule ??= await webpack
+  Modules.ImageModalLazy ??= await webpack
+    .waitForModule<Types.ImageModalLazy>(
+      webpack.filters.bySource(/contextKey.{40,60}openModalLazy/),
+      {
+        timeout: 10000,
+      },
+    )
+    .catch(() => {
+      throw new Error("Failed To Find ImageModalLazy Module");
+    });
+
+  Modules.ImageModalModulePromise ??= webpack
     .waitForModule<{ exports: Types.ImageModalModule }>(
       webpack.filters.bySource(".Messages.OPEN_IN_BROWSER"),
       {
-        timeout: 10000,
         raw: true,
       },
     )
@@ -48,7 +58,6 @@ Modules.loadModules = async (): Promise<void> => {
     .catch(() => {
       throw new Error("Failed To Find ImageModalModule Module");
     });
-
   Modules.ApplicationStreamPreviewStore ??= await webpack
     .waitForModule<Types.ApplicationStreamPreviewStore>(
       webpack.filters.bySource('="ApplicationStreamPreviewStore"'),

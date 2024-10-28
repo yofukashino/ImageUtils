@@ -124,6 +124,9 @@ export namespace Types {
         }>
       >;
   }
+  export interface ImageModalLazy {
+    openModal: (props: React.ComponentProps<ImageModalModule["ImageModal"]>) => void;
+  }
   export interface GuildMemberStore extends Store {
     getCommunicationDisabledUserMap: DefaultTypes.AnyFunction;
     getCommunicationDisabledVersion: DefaultTypes.AnyFunction;
@@ -210,7 +213,8 @@ export namespace Types {
     IconUtils?: IconUtils;
     ImageModalClasses?: ImageModalClasses;
     MaskedLink?: React.ComponentType<unknown>;
-    ImageModalModule?: ImageModalModule;
+    ImageModalLazy?: ImageModalLazy;
+    ImageModalModulePromise?: Promise<ImageModalModule>;
     GuildMemberStore?: GuildMemberStore;
     ApplicationStreamingStore?: ApplicationStreamingStore;
     ApplicationStreamPreviewStore?: ApplicationStreamPreviewStore;

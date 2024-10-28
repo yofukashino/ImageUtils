@@ -1,6 +1,6 @@
 import { util, webpack } from "replugged";
-import { modal as ModalUtils, React, toast as ToastUtils } from "replugged/common";
-import { ContextMenu, Modal } from "replugged/components";
+import { toast as ToastUtils } from "replugged/common";
+import { ContextMenu } from "replugged/components";
 import { PluginLogger, SettingValues, USRDB } from "../index";
 import Modules from "./requiredModules";
 import { USRBG_URL, defaultSettings } from "./consts";
@@ -66,30 +66,25 @@ export const resizeToFit = ({
   };
 };
 
-export const openImageModal = async (url: string, imgProps?: object): Promise<string> => {
-  const { modal } = Modules.ImageModalClasses ?? {};
+export const openImageModal = async (url: string, imgProps?: object): Promise<void> => {
   const dimensions = await getImageDimensions(url);
-  const ImageModal = webpack.getFunctionBySource<Types.ImageModalModule["ImageModal"]>(
-    Modules.ImageModalModule,
-    ".Messages.OPEN_IN_BROWSER",
+  const openImageModal = webpack.getFunctionBySource<Types.ImageModalLazy["openModal"]>(
+    Modules.ImageModalLazy,
+    ".openModalLazy",
   );
 
-  return ModalUtils.openModal((props) => (
-    <Modal.ModalRoot {...props} className={modal} size="dynamic">
-      <ImageModal
-        items={[
-          {
-            url,
-            original: url,
-            zoomThumbnailPlaceholder: url,
-            type: "IMAGE",
-            ...imgProps,
-            ...dimensions,
-          },
-        ]}
-      />
-    </Modal.ModalRoot>
-  ));
+  openImageModal({
+    items: [
+      {
+        url,
+        original: url,
+        zoomThumbnailPlaceholder: url,
+        type: "IMAGE",
+        ...imgProps,
+        ...dimensions,
+      },
+    ],
+  });
 };
 
 export const openIcon = (url: string, format?: string, size?: string): void => {
