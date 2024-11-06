@@ -49,7 +49,7 @@ Modules.loadModules = async (): Promise<void> => {
 
   Modules.ImageModalModulePromise ??= webpack
     .waitForModule<{ exports: Types.ImageModalModule }>(
-      webpack.filters.bySource(".Messages.OPEN_IN_BROWSER"),
+      webpack.filters.bySource(".zoomedMediaFitWrapper"),
       {
         raw: true,
       },

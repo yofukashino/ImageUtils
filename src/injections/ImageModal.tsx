@@ -7,7 +7,7 @@ import Types from "../types";
 
 export default async (): Promise<void> => {
   const ImageModalModule = await Modules.ImageModalModulePromise;
-  const ImageModal = webpack.getFunctionKeyBySource(ImageModalModule, ".Messages.OPEN_IN_BROWSER");
+  const ImageModal = webpack.getFunctionKeyBySource(ImageModalModule, ".zoomedMediaFitWrapper");
 
   PluginInjector.after(ImageModalModule, ImageModal, (_args, res: Types.ReactTree) => {
     const container = Utils.findInReactTree(
