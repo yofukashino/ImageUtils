@@ -9,8 +9,8 @@
   },
   "version": "1.1.6",
   "updater": {
-    "id": "yofukashino/ImageUtils",
-    "type": "github"
+    "type": "store",
+    "id": "dev.yofukashino.ImageUtils"
   },
   "license": "MIT",
   "type": "replugged-plugin",

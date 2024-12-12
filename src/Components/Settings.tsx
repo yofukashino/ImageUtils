@@ -1,6 +1,7 @@
 import { React } from "replugged/common";
 import {
   Category,
+  Checkbox,
   CheckboxItem,
   Flex,
   FormItem,
@@ -141,6 +142,7 @@ export const Settings = (): React.ReactElement => {
               );
               return (
                 <CheckboxItem
+                  type={Checkbox.Types.INVERTED}
                   value={value}
                   onChange={() => {
                     const iconSize = SettingValues.get("iconSize", defaultSettings.iconSize);
@@ -179,6 +181,7 @@ export const Settings = (): React.ReactElement => {
               );
               return (
                 <CheckboxItem
+                  type={Checkbox.Types.INVERTED}
                   value={value}
                   onChange={() => {
                     const iconType = SettingValues.get("iconType", defaultSettings.iconType);
@@ -218,6 +221,7 @@ export const Settings = (): React.ReactElement => {
             );
             return (
               <CheckboxItem
+                type={Checkbox.Types.INVERTED}
                 value={value}
                 onChange={() => {
                   const engines = SettingValues.get("engines", defaultSettings.engines);
