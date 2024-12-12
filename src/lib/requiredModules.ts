@@ -60,7 +60,7 @@ Modules.loadModules = async (): Promise<void> => {
     });
   Modules.ApplicationStreamPreviewStore ??= await webpack
     .waitForModule<Types.ApplicationStreamPreviewStore>(
-      webpack.filters.bySource('="ApplicationStreamPreviewStore"'),
+      webpack.filters.bySource('"ApplicationStreamPreviewStore"'),
       {
         timeout: 10000,
       },
