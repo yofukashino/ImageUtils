@@ -14,7 +14,7 @@ export const applyInjections = async (): Promise<void> => {
   injectGdmContext();
   injectGuildContext();
   injectImageContext();
-  injectImageModal();
+  void injectImageModal();
   injectMediaModals();
   injectMessageContext();
   injectStreamContext();
