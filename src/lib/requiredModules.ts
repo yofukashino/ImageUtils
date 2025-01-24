@@ -38,7 +38,7 @@ Modules.loadModules = async (): Promise<void> => {
 
   Modules.ImageModalLazy ??= await webpack
     .waitForModule<Types.ImageModalLazy>(
-      webpack.filters.bySource(/contextKey.{40,60}openModalLazy/),
+      webpack.filters.bySource(/hasMediaOptions:!\w+\.shouldHideMediaOptions/),
       {
         timeout: 10000,
       },
