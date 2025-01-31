@@ -79,7 +79,7 @@ export const openImageModal = async (url: string, imgProps?: object): Promise<vo
   );
 
   openImageModal({
-    className: Modules.ImageModalClasses.modal,
+    className: "imageUtils-modal",
     items: [
       {
         url,

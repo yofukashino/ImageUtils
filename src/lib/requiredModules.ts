@@ -20,14 +20,6 @@ Modules.loadModules = async (): Promise<void> => {
       throw new Error("Failed To Find IconUtils Module");
     });
 
-  Modules.ImageModalClasses ??= await webpack
-    .waitForModule<Types.ImageModalClasses>(webpack.filters.bySource(/{modal:"[\w_\d-]+?"}/), {
-      timeout: 10000,
-    })
-    .catch(() => {
-      throw new Error("Failed To Find ImageModalClasses Module");
-    });
-
   Modules.MaskedLink ??= await webpack
     .waitForModule<React.ComponentType<unknown>>(webpack.filters.bySource("MASKED_LINK)"), {
       timeout: 10000,

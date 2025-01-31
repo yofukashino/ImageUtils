@@ -104,10 +104,7 @@ export namespace Types {
     isAnimatedIconHash: DefaultTypes.AnyFunction;
     makeSource: DefaultTypes.AnyFunction;
   }
-  export interface ImageModalClasses {
-    image: string;
-    modal: string;
-  }
+
   export interface ImageModalModule {
     ImageModal: DefaultTypes.AnyFunction &
       React.ComponentType<
@@ -211,7 +208,6 @@ export namespace Types {
     loadModules?: () => Promise<void>;
     MediaModal?: MediaModal;
     IconUtils?: IconUtils;
-    ImageModalClasses?: ImageModalClasses;
     MaskedLink?: React.ComponentType<unknown>;
     ImageModalLazy?: ImageModalLazy;
     ImageModalModulePromise?: Promise<ImageModalModule>;
