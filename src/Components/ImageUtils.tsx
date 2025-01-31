@@ -1,7 +1,9 @@
 import { contextMenu as ContextMenuApi, React } from "replugged/common";
 import { SettingValues } from "..";
 import { defaultSettings } from "../lib/consts";
+import Utils from "../lib/utils";
 import Types from "../types";
+
 export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => {
   const OriginalComponent = props.children.bind(null, props.childProps);
   // To prevent re-renders of OriginalComponent when lensPosition, mediaPosition, or opacity change
@@ -227,10 +229,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
             width={`${box.width * zoom.current}px`}
             height={`${box.height * zoom.current}px`}
             poster={props.src}
-            src={
-              originalVideoElementRef.current?.src.replaceAll(/&(height|width)=\d+/g, "") ??
-              props.src.replaceAll(/&(height|width)=\d+/g, "")
-            }
+            src={Utils.resizeURL(originalVideoElementRef.current?.src ?? props.src)}
             autoPlay
             loop
           />
@@ -244,7 +243,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
             }}
             width={`${box.width * zoom.current}px`}
             height={`${box.height * zoom.current}px`}
-            src={props.src.replaceAll(/&(height|width)=\d+/g, "")}
+            src={Utils.resizeURL(props.src)}
             alt=""
           />
         )}

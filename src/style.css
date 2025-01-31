@@ -21,6 +21,7 @@ div:has(.imgUtils-lens[style*="opacity: 1"]) .imageUtils-backdrop {
 }
 #image-utils-modal {
   overflow: unset !important;
+  margin: auto;
 }
 .imageUtils-details a {
   position: unset !important;

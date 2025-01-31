@@ -66,11 +66,16 @@ export const resizeToFit = ({
   };
 };
 
+export const resizeURL = (url: string): string => {
+  if (url.includes("size=")) url = url.replaceAll(/size=\d+/g, "size=4096");
+  return url.replaceAll(/&(height|width)=\d+/g, "");
+};
+
 export const openImageModal = async (url: string, imgProps?: object): Promise<void> => {
   const dimensions = await getImageDimensions(url);
   const openImageModal = webpack.getFunctionBySource<Types.ImageModalLazy["openModal"]>(
     Modules.ImageModalLazy,
-    ".openModalLazy",
+    ".MEDIA_VIEWER",
   );
 
   openImageModal({
@@ -197,6 +202,7 @@ export default {
   getElementHex,
   getImageDimensions,
   resizeToFit,
+  resizeURL,
   openIcon,
   openImageModal,
   mapMenuItem,

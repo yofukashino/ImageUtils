@@ -21,7 +21,7 @@ Modules.loadModules = async (): Promise<void> => {
     });
 
   Modules.ImageModalClasses ??= await webpack
-    .waitForModule<Types.ImageModalClasses>(webpack.filters.bySource(/{modal:.+?}/), {
+    .waitForModule<Types.ImageModalClasses>(webpack.filters.bySource(/{modal:"[\w_\d-]+?"}/), {
       timeout: 10000,
     })
     .catch(() => {
