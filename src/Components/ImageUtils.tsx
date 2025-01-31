@@ -227,7 +227,10 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
             width={`${box.width * zoom.current}px`}
             height={`${box.height * zoom.current}px`}
             poster={props.src}
-            src={originalVideoElementRef.current?.src ?? props.src}
+            src={
+              originalVideoElementRef.current?.src.replaceAll(/&(height|width)=\d+/g, "") ??
+              props.src.replaceAll(/&(height|width)=\d+/g, "")
+            }
             autoPlay
             loop
           />
@@ -241,7 +244,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
             }}
             width={`${box.width * zoom.current}px`}
             height={`${box.height * zoom.current}px`}
-            src={props.src}
+            src={props.src.replaceAll(/&(height|width)=\d+/g, "")}
             alt=""
           />
         )}
