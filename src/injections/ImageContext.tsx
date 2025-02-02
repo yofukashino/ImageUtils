@@ -4,16 +4,18 @@ import { ContextMenu } from "replugged/components";
 import Utils from "../lib/utils";
 import Types from "../types";
 import { defaultSettings, searchEngines } from "../lib/consts";
-const { MenuSliderControl } = DiscordComponents as typeof DiscordComponents & {
-  MenuSliderControl: React.ComponentType<{
-    ref: unknown;
-    minValue: number;
-    maxValue: number;
-    value: number;
-    onChange(value: number): void;
-    renderValue?(value: number): string;
-  }>;
-};
+
+const MenuSliderControl = Object.values(DiscordComponents).find((c) =>
+  c?.render?.toString?.()?.includes?.("slider"),
+) as React.ComponentType<{
+  ref: unknown;
+  minValue: number;
+  maxValue: number;
+  value: number;
+  onChange(value: number): void;
+  renderValue?(value: number): string;
+}>;
+
 export default (): void => {
   PluginInjectorUtils.addMenuItem(
     Types.DefaultTypes.ContextMenuTypes.ImageContext,
