@@ -1,7 +1,8 @@
 import { React, toast as ToastUtils } from "replugged/common";
-import { Flex, Text } from "replugged/components";
+import { Flex, Text, Tooltip } from "replugged/components";
 import { SettingValues } from "../index";
 import { defaultSettings } from "../lib/consts";
+import Icons from "./Icons";
 import Utils from "../lib/utils";
 import Types from "../types";
 import apngParse, { APNG } from "apng-js";
@@ -215,6 +216,67 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
       clearGifInterval?.();
     };
   }, [mouseOver, videoRef.current, apngRef.current, cursorPosition]);
+  if (props.redesigned)
+    return (
+      <>
+        {SettingValues.get("hex", defaultSettings.hex) && (
+          <Tooltip text="Shift+C To Copy">
+            <Flex
+              direction={Flex.Direction.HORIZONTAL}
+              justify={Flex.Justify.CENTER}
+              style={{
+                height: "28px",
+                marginBottom: "2px",
+                marginTop: "2px",
+                width: "64px",
+                backgroundColor: hex,
+                borderRadius: "10px",
+              }}>
+              <Text.Eyebrow
+                style={{
+                  textAlign: "center",
+                  lineHeight: "28px",
+                  fontSize: "13px",
+                  color: hex,
+                  filter: "invert(1)",
+                }}>
+                {hex}
+              </Text.Eyebrow>
+            </Flex>
+          </Tooltip>
+        )}
+        {SettingValues.get("dimensions", defaultSettings.dimensions) && (
+          <Tooltip text={`${dimensions} (Height*Width)`}>
+            <Flex
+              direction={Flex.Direction.HORIZONTAL}
+              justify={Flex.Justify.CENTER}
+              style={{
+                height: "32px",
+                width: "32px",
+                alignItems: "center",
+                color: "var(--interactive-normal)",
+              }}>
+              <Icons.info />
+            </Flex>
+          </Tooltip>
+        )}
+        {SettingValues.get("host", defaultSettings.host) && (
+          <Tooltip text={`Host: ${host}`}>
+            <Flex
+              direction={Flex.Direction.HORIZONTAL}
+              justify={Flex.Justify.CENTER}
+              style={{
+                height: "32px",
+                width: "32px",
+                alignItems: "center",
+                color: "var(--interactive-normal)",
+              }}>
+              <Icons.host />
+            </Flex>
+          </Tooltip>
+        )}
+      </>
+    );
   return (
     <div className={`imageUtils-details`}>
       <Flex direction={Flex.Direction.HORIZONTAL} justify={Flex.Justify.BETWEEN}>

@@ -28,7 +28,6 @@ export default async (): Promise<void> => {
           i.url === Image.props.src ||
           i.proxyUrl === Image.props.src,
       )?.type !== "VIDEO";
-
     if (!isImage || !Image || !container) return res;
 
     container.props.children = (

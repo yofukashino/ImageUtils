@@ -21,3 +21,5 @@ export const stop = (): void => {
 };
 
 export { Settings } from "./Components/Settings.jsx";
+
+export { _zoom, _details } from "./plaintextFunctions";

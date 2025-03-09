@@ -4,6 +4,7 @@ import injectGdmContext from "./GdmContext";
 import injectGuildContext from "./GuildContext";
 import injectImageContext from "./ImageContext";
 import injectImageModal from "./ImageModal";
+import injectImageZoomWrapper from "./ImageZoomWrapper";
 import injectMediaModals from "./MediaModals";
 import injectMessageContext from "./MessageContext";
 import injectStreamContext from "./StreamContext";
@@ -15,6 +16,7 @@ export const applyInjections = async (): Promise<void> => {
   injectGuildContext();
   injectImageContext();
   void injectImageModal();
+  injectImageZoomWrapper();
   injectMediaModals();
   injectMessageContext();
   injectStreamContext();

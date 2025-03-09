@@ -65,8 +65,9 @@ export namespace Types {
   }
 
   export interface ImageDetailsProps {
-    children: React.ReactElement[] | React.ReactElement;
+    children?: React.ReactElement[] | React.ReactElement;
     src: string;
+    redesigned?: boolean;
   }
   export interface IconUtils {
     getAnimatableSourceWithFallback: DefaultTypes.AnyFunction;
@@ -209,6 +210,7 @@ export namespace Types {
     MediaModal?: MediaModal;
     IconUtils?: IconUtils;
     MaskedLink?: React.ComponentType<unknown>;
+    ImageZoomWrapper?: DefaultTypes.ModuleExports;
     ImageModalLazy?: ImageModalLazy;
     ImageModalModulePromise?: Promise<ImageModalModule>;
     GuildMemberStore?: GuildMemberStore;
