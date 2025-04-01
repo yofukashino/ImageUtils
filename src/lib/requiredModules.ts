@@ -4,13 +4,12 @@ import Types from "../types";
 export const Modules: Types.Modules = {};
 
 Modules.loadModules = async (): Promise<void> => {
-  Modules.Image ??= await webpack
-    .waitForModule<Record<string, Types.Image>>(webpack.filters.bySource('displayName="Image"'), {
+  Modules.MediaModal ??= await webpack
+    .waitForModule<Types.MediaModal>(webpack.filters.bySource("/\\.gif($|\\?|#)/i"), {
       timeout: 10000,
     })
-    .then((mod) => Object.values(mod)[0])
     .catch(() => {
-      throw new Error("Failed To Find Image Module");
+      throw new Error("Failed To Find MediaModal Module");
     });
 
   Modules.IconUtils ??= await webpack
