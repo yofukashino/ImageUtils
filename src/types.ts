@@ -13,6 +13,11 @@ export namespace Types {
   export type Message = GeneralDiscordTypes.Message;
   export type UtilTree = util.Tree;
   export type ReactTree = util.Tree & React.ReactElement;
+  export interface Image {
+    $$typeof: symbol;
+    displayName: "Image";
+    render: DefaultTypes.AnyFunction;
+  }
   export interface MediaModal {
     IMAGE_GIF_RE: string;
     default: DefaultTypes.AnyFunction;
@@ -47,7 +52,7 @@ export namespace Types {
   export interface ImageUtilsProps {
     animated: boolean;
     autoPlay: boolean;
-    children: DefaultTypes.AnyFunction & React.ComponentType;
+    children: React.ReactElement;
     height: number;
     maxHeight: number;
     maxWidth: number;
@@ -60,7 +65,6 @@ export namespace Types {
     shouldRenderAccessory: boolean;
     src: string;
     width: number;
-    childProps: OriginalCompoenntProps;
     ready: boolean;
   }
 
@@ -207,6 +211,7 @@ export namespace Types {
   }
   export interface Modules {
     loadModules?: () => Promise<void>;
+    Image?: Image;
     MediaModal?: MediaModal;
     IconUtils?: IconUtils;
     MaskedLink?: React.ComponentType<unknown>;

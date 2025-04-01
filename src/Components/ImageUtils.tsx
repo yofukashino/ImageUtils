@@ -5,9 +5,7 @@ import Utils from "../lib/utils";
 import Types from "../types";
 
 export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => {
-  const OriginalComponent = props.children.bind(null, props.childProps);
   // To prevent re-renders of OriginalComponent when lensPosition, mediaPosition, or opacity change
-  const originalComponentRef = React.useRef(OriginalComponent);
 
   const [ready, setReady] = React.useState(false);
 
@@ -117,10 +115,9 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       elem.querySelector("img,video")?.setAttribute("draggable", "false");
 
       setReady(true);
-      originalComponentRef.current = OriginalComponent;
       syncGifs();
     }
-  }, [props.ready, props.childProps]);
+  }, [props.ready]);
   React.useEffect(() => {
     const onTimeUpdate = (): void => {
       if (currentVideoElementRef.current && originalVideoElementRef.current)
@@ -140,7 +137,7 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
         originalVideoElementRef.current.classList.remove("imageUtils-backdrop");
       currentVideoElementRef.current.src = originalVideoElementRef.current.src;
     }
-    originalComponentRef.current = OriginalComponent;
+
     return () => {
       originalVideoElementRef.current?.removeEventListener("timeupdate", onTimeUpdate);
     };
@@ -248,9 +245,9 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
           />
         )}
       </div>
-      {originalComponentRef.current()}
+      {props.children}
     </div>
   ) : (
-    originalComponentRef.current()
+    props.children
   );
 });
