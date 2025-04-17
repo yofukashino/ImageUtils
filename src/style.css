@@ -1,3 +1,6 @@
+#image-utils-modal > a {
+  z-index: -1;
+}
 .imgUtils-lens {
   position: absolute;
   inset: 0;
