@@ -13,7 +13,12 @@ export default (): void => {
 
   PluginInjector.after(ImageZoomWrapper, "type", (_args, res: React.ReactElement) => {
     if (!res?.props || res?.props?.alt === "Video") return res;
-    if (!SettingValues.get("hideLens", defaultSettings.hideLens)) delete res.props.onClick;
+    console.log(res);
+    if (!SettingValues.get("hideLens", defaultSettings.hideLens)) {
+      delete res.props.onClick;
+      delete res.props.onMouseDown;
+      delete res.props.onMouseUp;
+    }
     return res;
   });
 };
