@@ -40,13 +40,13 @@ Modules.loadModules = async (): Promise<void> => {
     });
   Modules.ImageZoomWrapper ??= await webpack
     .waitForModule<Types.DefaultTypes.ModuleExports>(
-      webpack.filters.bySource(".ZOOM_OUT_IMAGE_PRESSED:"),
+      webpack.filters.bySource('"zoom-out":"zoom-in"'),
       {
         timeout: 10000,
       },
     )
     .catch(() => {
-      throw new Error("Failed To Find ImageModalLazy Module");
+      throw new Error("Failed To Find ImageZoomWrapper Module");
     });
 
   Modules.ImageModalModulePromise ??= webpack
