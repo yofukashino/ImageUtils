@@ -34,7 +34,6 @@ export namespace Types {
     IconUtils?: IconUtils;
     MediaModalLazy?: MediaModalLazy;
     ImageZoomWrapper?: ImageZoomWrapper;
-
     GuildMemberStore?: GuildMemberStore;
     ApplicationStreamingStore?: ApplicationStreamingStore;
     ApplicationStreamPreviewStore?: ApplicationStreamPreviewStore;
