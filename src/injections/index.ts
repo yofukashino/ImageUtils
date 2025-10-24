@@ -1,26 +1,29 @@
-import Modules from "../lib/requiredModules";
-import injectExpressionPickerContext from "./ExpressionPickerContext";
-import injectGdmContext from "./GdmContext";
-import injectGuildContext from "./GuildContext";
-import injectImageContext from "./ImageContext";
-import injectImageModal from "./ImageModal";
-import injectImageZoomWrapper from "./ImageZoomWrapper";
-import injectMediaModals from "./MediaModals";
-import injectMessageContext from "./MessageContext";
-import injectStreamContext from "./StreamContext";
-import injectUserContext from "./UserContext";
+import { PluginInjector, PluginLogger } from "@this";
+import Modules from "@lib/RequiredModules";
+
+const InjectionNames = [
+  "ExpressionPickerContext.tsx",
+  "GdmContext.tsx",
+  "GuildContext.tsx",
+  "ImageContext.tsx",
+  "ImageZoomWrapper.ts",
+  "MediaModals.tsx",
+  "MessageContext.tsx",
+  "StreamContext.tsx",
+  "UserContext.tsx",
+] as const;
+
 export const applyInjections = async (): Promise<void> => {
-  await Modules.loadModules();
-  injectExpressionPickerContext();
-  injectGdmContext();
-  injectGuildContext();
-  injectImageContext();
-  void injectImageModal();
-  injectImageZoomWrapper();
-  injectMediaModals();
-  injectMessageContext();
-  injectStreamContext();
-  injectUserContext();
+  try {
+    await Modules.loadModules();
+    await Promise.all(InjectionNames.map((name) => import(`./${name}`)));
+  } catch (err: unknown) {
+    PluginLogger.error(err);
+  }
 };
 
-export default { applyInjections };
+export const removeInjections = (): void => {
+  PluginInjector.uninjectAll();
+};
+
+export default { applyInjections, removeInjections };

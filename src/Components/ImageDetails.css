@@ -1,0 +1,18 @@
+.imageUtils-details a {
+  position: unset !important;
+  line-height: unset !important;
+}
+div:has(> .imageUtils-details),
+.imageUtils-details {
+  position: unset !important;
+  display: unset !important;
+  line-height: 30px !important;
+}
+
+.imageUtils-detailsText {
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.5;
+  align-content: end;
+  text-align: right;
+}

@@ -1,0 +1,16 @@
+.imgUtils-expandVideo {
+  cursor: pointer;
+  align-items: center;
+  background: none;
+  border: 1px solid var(--opacity-white-8);
+  border-radius: 8px;
+  box-sizing: border-box;
+  display: flex;
+  font-size: 14px;
+  font-weight: var(--font-weight-medium);
+  justify-content: center;
+  line-height: 16px;
+  position: relative;
+  transition-duration: 0.2s;
+  user-select: none;
+}

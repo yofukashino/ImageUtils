@@ -1,57 +1,29 @@
 #image-utils-modal > a {
   z-index: -1;
 }
-.imgUtils-lens {
-  position: absolute;
-  inset: 0;
-  z-index: 9999;
-  border: 2px solid black;
-  border-radius: 50%;
-  overflow: hidden;
-  max-height: unset !important;
-  max-width: unset !important;
-  cursor: unset !important;
-  pointer-events: none;
-}
-.imgUtils-lens.square {
-  border-radius: 0;
-}
-.imgUtils-pixelZoom > img {
-  image-rendering: pixelated;
-}
-div:has(.imgUtils-lens[style*="opacity: 1"]) .imageUtils-backdrop {
-  filter: brightness(25%);
-}
+
 #image-utils-modal {
   overflow: unset !important;
   margin: auto;
 }
-.imageUtils-details a {
-  position: unset !important;
-  line-height: unset !important;
-}
-div:has(> .imageUtils-details),
-.imageUtils-details {
-  position: unset !important;
-  display: unset !important;
-  line-height: 30px !important;
-}
-
-.imageUtils-detailsText {
-  font-size: 14px;
-  font-weight: 500;
-  opacity: 0.5;
-  align-content: end;
-  text-align: right;
-}
 
 .imageUtils-modal {
-  background: transparent !important;
   box-shadow: none !important;
-  display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 0;
+  background: transparent !important;
+  border: none !important;
+  bottom: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 40px 184px 1fr 184px 40px;
+  grid-template-rows: 40px 1fr 40px;
+  left: 0;
+  margin: 36px 24px;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 @media (max-width: 485px) {

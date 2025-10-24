@@ -1,0 +1,22 @@
+.imgUtils-lens {
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  border: 2px solid black;
+  border-radius: 50%;
+  overflow: hidden;
+  max-height: unset !important;
+  max-width: unset !important;
+  cursor: unset !important;
+  pointer-events: none;
+}
+.imgUtils-lens.square {
+  border-radius: 0;
+}
+.imgUtils.pixelZoom > img {
+  image-rendering: pixelated;
+}
+
+div:has(.imgUtils-lens[style*="opacity: 1"]) .imageUtils-backdrop {
+  filter: brightness(25%);
+}

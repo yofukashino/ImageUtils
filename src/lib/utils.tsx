@@ -1,24 +1,27 @@
-import { util, webpack } from "replugged";
+import { util } from "replugged";
 import { toast as ToastUtils } from "replugged/common";
 import { ContextMenu } from "replugged/components";
-import { PluginLogger, SettingValues, USRDB } from "../index";
-import Modules from "./requiredModules";
-import { USRBG_URL, defaultSettings } from "./consts";
-import Types from "../types";
+import { SettingValues } from "@this";
+import { DefaultSettings } from "@consts";
+import { MediaModalLazy } from "@lib/RequiredModules";
+import type { MediaItem } from "@lib/RequiredModules/MediaModalLazy";
+import type Types from "@Types";
 
 export const getElementHex = (
   element: HTMLVideoElement | HTMLImageElement,
   { x, y }: { x: number; y: number },
 ): string => {
   const canvas = document.createElement("canvas");
-  canvas.width = element.width;
-  canvas.height = element.height;
   const ctx = canvas.getContext("2d");
-  if (!element.src?.includes("blob") && element.crossOrigin != "anonymous") {
+  const { src, crossOrigin, width, height } = element;
+  canvas.width = width;
+  canvas.height = height;
+
+  if (!src?.includes("blob") && crossOrigin !== "anonymous") {
     element.crossOrigin = "anonymous";
-    element.src = `${element.src}`;
+    element.src = src;
   }
-  ctx.drawImage(element, 0, 0, element.width, element.height);
+  ctx.drawImage(element, 0, 0, width, height);
   const [R, G, B] = ctx.getImageData(x, y, 1, 1).data;
   return `#${((1 << 24) + (R << 16) + (G << 8) + B).toString(16).slice(1)}`;
 };
@@ -28,16 +31,10 @@ export const getImageDimensions = (url: string): Promise<{ height: number; width
     const img = new Image();
     img.crossOrigin = "anonymous";
     img.onload = () => {
-      const canvas = document.createElement("canvas") as HTMLCanvasElement;
-      const ctx = canvas.getContext("2d");
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0, img.width, img.height);
-      const dimensions = {
+      resolve({
         width: img.width,
         height: img.height,
-      };
-      resolve(dimensions);
+      });
     };
     img.onerror = () => reject(new Error("Failed to load image"));
     img.src = url;
@@ -52,14 +49,17 @@ export const resizeToFit = ({
 }): { width: number; height: number } => {
   const maxHeight = Math.min(Math.round(0.65 * window.innerHeight), 2e3);
   const maxWidth = Math.min(Math.round(0.75 * window.innerWidth), 2e3);
+
   if (width !== maxWidth || height !== maxHeight) {
     const scaledWidth = width > maxWidth ? maxWidth / width : 1;
     width = Math.max(Math.round(width * scaledWidth), 0);
     height = Math.max(Math.round(height * scaledWidth), 0);
+
     const scaledHeight = height > maxHeight ? maxHeight / height : 1;
     width = Math.max(Math.round(width * scaledHeight), 0);
     height = Math.max(Math.round(height * scaledHeight), 0);
   }
+
   return {
     width,
     height,
@@ -71,14 +71,9 @@ export const resizeURL = (url: string): string => {
   return url.replaceAll(/&(height|width)=\d+/g, "");
 };
 
-export const openImageModal = async (url: string, imgProps?: object): Promise<void> => {
-  const dimensions = await getImageDimensions(url);
-  const openImageModal = webpack.getFunctionBySource<Types.ImageModalLazy["openModal"]>(
-    Modules.ImageModalLazy,
-    ".MEDIA_VIEWER",
-  );
-
-  openImageModal({
+export const openModal = async (url: string, imgProps?: MediaItem): Promise<void> => {
+  const dimensions = imgProps?.type !== "VIDEO" ? await getImageDimensions(url) : {};
+  MediaModalLazy.openModal({
     className: "imageUtils-modal",
     items: [
       {
@@ -105,7 +100,8 @@ export const openIcon = (url: string, format?: string, size?: string): void => {
 
   href.searchParams.set("size", "4096");
   const originalUrl = href.toString();
-  openImageModal(url, {
+
+  void openModal(url, {
     original: originalUrl,
     height: 512,
     width: 512,
@@ -123,20 +119,19 @@ export const mapMenuItem = (
   if (!url || /data:image\/\w+;base64,/.test(url))
     return {
       action: () =>
-        ToastUtils.toast("Error Fetching Image, Try again later.", ToastUtils.Kind.FAILURE, {
-          duration: 5000,
-        }),
+        ToastUtils.toast("Error Fetching Image, Try again later.", ToastUtils.Kind.FAILURE),
     };
-  if (url?.includes("discordapp.com/streams") || url?.includes("usrbg.is-hardly.online/usrbg"))
+  if (url?.includes("discordapp.com/streams") || url?.includes("usrbg.is-hardly.online"))
     return { action: () => openIcon(url) };
+
   const animated = url?.includes("gif");
   const formats = url?.includes("discordapp.com/stickers")
     ? ["png"]
-    : SettingValues.get("iconType", defaultSettings.iconType).filter((c) =>
+    : SettingValues.get("iconType", DefaultSettings.iconType).filter((c) =>
         animated ? true : c !== "gif",
       );
   const sizes = url.includes("discord")
-    ? SettingValues.get("iconSize", defaultSettings.iconSize).sort(
+    ? SettingValues.get("iconSize", DefaultSettings.iconSize).sort(
         (a: string, b: string) => Number(a) - Number(b),
       )
     : ["512"];
@@ -144,7 +139,7 @@ export const mapMenuItem = (
   if (formats.length === 0 || sizes.length === 0) {
     return null;
   }
-  const renderMenuItem = (format, size, onlySize?: boolean): React.ReactElement => (
+  const renderMenuItem = (format: string, size: string, onlySize?: boolean): React.ReactElement => (
     <ContextMenu.MenuItem
       id={`imageUtils${onlySize ? "" : `-format-${format}`}-${size}`}
       label={`${onlySize ? "" : format} ${onlySize ? "" : "-"} ${size}px`}
@@ -173,28 +168,11 @@ export const mapMenuItem = (
   return {
     action: () => openIcon(url),
     children: formats.map((f) => (
-      <ContextMenu.MenuItem id={`imageUtils-${f}`} label={`${f}`}>
+      <ContextMenu.MenuItem key={f} id={`imageUtils-${f}`} label={f}>
         {sizes.map((s) => renderMenuItem(f, s, true))}
       </ContextMenu.MenuItem>
     )),
   };
-};
-
-export const loadUSRBD = async (reload?: boolean): Promise<void> => {
-  const fetchStart = performance.now();
-  const USRBG_RESPONSE = await fetch(USRBG_URL);
-  const USRBG_JSON = await USRBG_RESPONSE.json();
-  for (const [USRBG_USERID, USRBG_ETAG] of Object.entries(USRBG_JSON.users))
-    USRDB.set(
-      USRBG_USERID,
-      `${USRBG_JSON.endpoint}/${USRBG_JSON.bucket}/${USRBG_JSON.prefix}${USRBG_USERID}?${
-        USRBG_ETAG as string
-      }`,
-    );
-  const fetchEnd = performance.now();
-  PluginLogger.log(
-    `${reload ? "Reloaded" : "Loaded"} USRBG Database in ${(fetchEnd - fetchStart).toFixed(2)}ms.`,
-  );
 };
 
 export default {
@@ -204,7 +182,6 @@ export default {
   resizeToFit,
   resizeURL,
   openIcon,
-  openImageModal,
+  openModal,
   mapMenuItem,
-  loadUSRBD,
 };

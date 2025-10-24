@@ -1,22 +1,50 @@
-import { contextMenu as ContextMenuApi, React } from "replugged/common";
-import { SettingValues } from "..";
-import { defaultSettings } from "../lib/consts";
-import Utils from "../lib/utils";
-import Types from "../types";
+import { React, classNames, contextMenu } from "replugged/common";
+import { SettingValues } from "@this";
+import { DefaultSettings } from "@consts";
+import Utils from "@Utils";
 
-export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => {
-  const OriginalComponent = props.children.bind(null, props.childProps);
-  // To prevent re-renders of OriginalComponent when lensPosition, mediaPosition, or opacity change
-  const originalComponentRef = React.useRef(OriginalComponent);
+import type { ImageChildrenProps } from "@lib/RequiredModules/MediaModal";
 
+import "./ImageUtils.css";
+export interface ImageUtilsProps {
+  animated: boolean;
+  autoPlay: boolean;
+  ImageComponent: React.FC<ImageChildrenProps>;
+  height: number;
+  maxHeight: number;
+  maxWidth: number;
+  minHeight: number;
+  minWidth: number;
+  onContextMenu: (e: React.MouseEvent) => void;
+  placeholder: number;
+  responsive: boolean;
+  shouldLink: boolean;
+  shouldRenderAccessory: boolean;
+  src: string;
+  width: number;
+  childProps: ImageChildrenProps;
+  ready: boolean;
+}
+
+export default React.memo(({ ImageComponent, ...props }: ImageUtilsProps): React.ReactElement => {
   const [ready, setReady] = React.useState(false);
 
   const [lensPosition, setLensPosition] = React.useState({ x: 0, y: 0 });
   const [mediaPosition, setMediaPosition] = React.useState({ x: 0, y: 0 });
   const [opacity, setOpacity] = React.useState(0);
+  const saveValues = React.useRef(SettingValues.useValue("saveValues", DefaultSettings.saveValues));
+  const darkenImage = React.useRef(
+    SettingValues.useValue("darkenImage", DefaultSettings.darkenImage),
+  );
+  const invertScroll = React.useRef(
+    SettingValues.useValue("invertScroll", DefaultSettings.invertScroll),
+  );
+  const scrollSpeed = React.useRef(
+    SettingValues.useValue("scrollSpeed", DefaultSettings.scrollSpeed),
+  );
 
-  const zoom = React.useRef(SettingValues.get("zoom", defaultSettings.zoom));
-  const size = React.useRef(SettingValues.get("size", defaultSettings.size));
+  const zoom = React.useRef(SettingValues.useValue("zoom", DefaultSettings.zoom));
+  const size = React.useRef(SettingValues.useValue("size", DefaultSettings.size));
   const mouseOver = React.useRef(false);
   const mouseDown = React.useRef(false);
   const shiftDown = React.useRef(false);
@@ -30,38 +58,33 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       setOpacity(0);
       return;
     }
+    const boundingClientRect = element.current.getBoundingClientRect();
 
     setLensPosition({
       x:
         Number(
-          e.clientX < element.current!.getBoundingClientRect().left
-            ? element.current!.getBoundingClientRect().left
-            : e.clientX > element.current!.getBoundingClientRect().right
-              ? element.current!.getBoundingClientRect().right
+          e.clientX < boundingClientRect.left
+            ? boundingClientRect.left
+            : e.clientX > boundingClientRect.right
+              ? boundingClientRect.right
               : e.clientX,
         ) -
-        element.current!.getBoundingClientRect().left -
+        boundingClientRect.left -
         size.current / 2,
       y:
         Number(
-          e.clientY < element.current!.getBoundingClientRect().top
-            ? element.current!.getBoundingClientRect().top
-            : e.clientY > element.current!.getBoundingClientRect().bottom
-              ? element.current!.getBoundingClientRect().bottom
+          e.clientY < boundingClientRect.top
+            ? boundingClientRect.top
+            : e.clientY > boundingClientRect.bottom
+              ? boundingClientRect.bottom
               : e.clientY,
         ) -
-        element.current!.getBoundingClientRect().top -
+        boundingClientRect.top -
         size.current / 2,
     });
     setMediaPosition({
-      x: -(
-        (e.pageX - element.current!.getBoundingClientRect().left) * zoom.current -
-        size.current / 2
-      ),
-      y: -(
-        (e.pageY - element.current!.getBoundingClientRect().top) * zoom.current -
-        size.current / 2
-      ),
+      x: -((e.pageX - boundingClientRect.left) * zoom.current - size.current / 2),
+      y: -((e.pageY - boundingClientRect.top) * zoom.current - size.current / 2),
     });
     setOpacity(1);
   };
@@ -71,22 +94,26 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       e.stopPropagation();
       lensChange(e);
     };
+
     const onMouseUp = (e): void => {
       e.preventDefault();
       e.stopPropagation();
       mouseDown.current = false;
       setOpacity(0);
     };
+
     const onKeyDown = (e): void => {
       if (e.key === "Shift") {
         shiftDown.current = true;
       }
     };
+
     const onKeyUp = (e): void => {
       if (e.key === "Shift") {
         shiftDown.current = false;
       }
     };
+
     document.addEventListener("mousemove", onMouseMove);
     document.addEventListener("mouseup", onMouseUp);
     document.addEventListener("keydown", onKeyDown);
@@ -98,12 +125,13 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       document.removeEventListener("keyup", onKeyUp);
     };
   });
+
   React.useEffect(() => {
     if (props.ready) {
       const elem = document.getElementById("image-utils-modal") as HTMLDivElement;
       element.current = elem;
       const syncGifs = async (): Promise<void> => {
-        const gifs = elem?.querySelectorAll('img[src*=".gif"]') as NodeListOf<HTMLImageElement>;
+        const gifs: NodeListOf<HTMLImageElement> = elem?.querySelectorAll('img[src*=".gif"]');
         for (const gif of gifs) {
           const reader = new FileReader();
           const blob = await fetch(props.src).then((response) => response.blob());
@@ -117,38 +145,36 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       elem.querySelector("img,video")?.setAttribute("draggable", "false");
 
       setReady(true);
-      originalComponentRef.current = OriginalComponent;
-      syncGifs();
+      void syncGifs();
     }
   }, [props.ready, props.childProps]);
+
   React.useEffect(() => {
     const onTimeUpdate = (): void => {
       if (currentVideoElementRef.current && originalVideoElementRef.current)
-        currentVideoElementRef.current!.currentTime = originalVideoElementRef.current!.currentTime;
+        currentVideoElementRef.current.currentTime = originalVideoElementRef.current.currentTime;
     };
+
     if (originalVideoElementRef.current && props.animated) {
       originalVideoElementRef.current.addEventListener("timeupdate", onTimeUpdate);
       if (
-        SettingValues.get("darkenImage", defaultSettings.darkenImage) &&
+        darkenImage.current &&
         !originalVideoElementRef.current.classList.contains("imageUtils-backdrop")
       )
         originalVideoElementRef.current.classList.add("imageUtils-backdrop");
+
       if (
-        !SettingValues.get("darkenImage", defaultSettings.darkenImage) &&
+        !darkenImage.current &&
         originalVideoElementRef.current.classList.contains("imageUtils-backdrop")
       )
         originalVideoElementRef.current.classList.remove("imageUtils-backdrop");
       currentVideoElementRef.current.src = originalVideoElementRef.current.src;
     }
-    originalComponentRef.current = OriginalComponent;
     return () => {
       originalVideoElementRef.current?.removeEventListener("timeupdate", onTimeUpdate);
     };
   }, [originalVideoElementRef.current]);
-  React.useEffect(() => {
-    zoom.current = SettingValues.get("zoom", defaultSettings.zoom);
-    size.current = SettingValues.get("size", defaultSettings.size);
-  }, [JSON.stringify(SettingValues.all())]);
+
   const box = element.current?.getBoundingClientRect();
 
   if (!box) return null;
@@ -158,21 +184,14 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       onWheel={(e) => {
         if (mouseOver.current && !shiftDown.current) {
           const val =
-            zoom.current +
-            (e.deltaY / 100) *
-              (SettingValues.get("invertScroll", defaultSettings.invertScroll) ? -1 : 1) *
-              SettingValues.get("scrollSpeed", defaultSettings.scrollSpeed);
+            zoom.current + (e.deltaY / 100) * (invertScroll.current ? -1 : 1) * scrollSpeed.current;
           zoom.current = val <= 1 ? 1 : val;
         }
         if (mouseOver.current && shiftDown.current) {
-          const val =
-            size.current +
-            e.deltaY *
-              (SettingValues.get("invertScroll", defaultSettings.invertScroll) ? -1 : 1) *
-              SettingValues.get("scrollSpeed", defaultSettings.scrollSpeed);
+          const val = size.current + e.deltaY * (invertScroll ? -1 : 1) * scrollSpeed.current;
           size.current = val <= 50 ? 50 : val;
         }
-        if (SettingValues.get("saveValues", defaultSettings.saveValues)) {
+        if (saveValues.current) {
           SettingValues.set("zoom", zoom.current);
           SettingValues.set("size", size.current);
         }
@@ -195,23 +214,25 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
       onMouseDown={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        ContextMenuApi.close();
+        contextMenu.close();
         if (e.button === 0) {
           mouseDown.current = true;
-          zoom.current = SettingValues.get("zoom", defaultSettings.zoom);
-          size.current = SettingValues.get("size", defaultSettings.size);
-
+          zoom.current = SettingValues.get("zoom", DefaultSettings.zoom);
+          size.current = SettingValues.get("size", DefaultSettings.size);
           lensChange(e);
           setOpacity(1);
         }
       }}
       ref={(ref) => {
-        const videoRef = ref?.querySelector("video[class*=embedVideo]") as HTMLVideoElement;
+        const videoRef: HTMLVideoElement = ref?.querySelector("video[class*=embedVideo]");
         if (!ref || !videoRef || originalVideoElementRef.current === videoRef) return;
         originalVideoElementRef.current = videoRef;
       }}>
       <div
-        className={`imgUtils-lens${SettingValues.get("square", defaultSettings.square) ? " square" : ""}${SettingValues.get("pixelZoom", defaultSettings.pixelZoom) ? " pixelZoom" : ""}`}
+        className={classNames("imgUtils-lens", {
+          square: SettingValues.get("square", DefaultSettings.square),
+          pixelZoom: SettingValues.get("pixelZoom", DefaultSettings.pixelZoom),
+        })}
         style={{
           opacity,
           width: `${size.current}px`,
@@ -248,9 +269,10 @@ export default React.memo((props: Types.ImageUtilsProps): React.ReactElement => 
           />
         )}
       </div>
-      {originalComponentRef.current()}
+
+      <ImageComponent {...props.childProps} />
     </div>
   ) : (
-    originalComponentRef.current()
+    <ImageComponent {...props.childProps} />
   );
 });

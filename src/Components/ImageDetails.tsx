@@ -1,13 +1,20 @@
-import { React, toast as ToastUtils } from "replugged/common";
+import { React, toast } from "replugged/common";
 import { Flex, Text, Tooltip } from "replugged/components";
-import { SettingValues } from "../index";
-import { defaultSettings } from "../lib/consts";
-import Icons from "./Icons";
-import Utils from "../lib/utils";
-import Types from "../types";
-import apngParse, { APNG } from "apng-js";
+import APNGParse, { type APNG } from "apng-js";
 import { decompressFrames, parseGIF } from "gifuct-js";
-export default React.memo((props: Types.ImageDetailsProps): React.ReactElement => {
+import { SettingValues } from "@this";
+import { DefaultSettings } from "@consts";
+import Icons from "@Icons";
+import Utils from "@Utils";
+
+import "./ImageDetails.css";
+
+export interface ImageDetailsProps {
+  details?: React.ReactElement[] | React.ReactElement;
+  src: string;
+}
+
+export default React.memo((props: ImageDetailsProps): React.ReactElement => {
   const [host, setHost] = React.useState(location.host);
   const [hex, setHex] = React.useState("#000000");
   const [dimensions, setDimensions] = React.useState("0x0");
@@ -19,20 +26,19 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
   const apngRef = React.useRef<APNG | null>(null);
   const gifRef = React.useRef<{ duration: number; frames: HTMLImageElement[] } | null>(null);
   React.useEffect(() => {
-    const elem = document.getElementById("image-utils-modal") as HTMLDivElement;
-    element.current = elem;
-
-    const waitForVideo = async (): Promise<void> => {
+    const elem = document.getElementById("image-utils-modal");
+    element.current = elem as HTMLDivElement;
+    const waitForElement = async (): Promise<void> => {
       while (
         !element.current?.querySelector("img") &&
         !element.current?.querySelector("video[class*=embedVideo]")
       ) {
         await Utils.sleep(100);
       }
-
-      videoRef.current = element.current?.querySelector(
-        "video[class*=embedVideo]",
-      ) as HTMLVideoElement;
+    };
+    const waitForVideo = async (): Promise<void> => {
+      await waitForElement();
+      videoRef.current = element.current?.querySelector("video[class*=embedVideo]");
     };
     const getAndSetDimensions = async (): Promise<void> => {
       const { height, width } = await Utils.getImageDimensions(props.src);
@@ -44,16 +50,11 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
     };
     const getAndSetApng = async (): Promise<void> => {
       const imgBuffer = await fetch(props.src).then((response) => response.arrayBuffer());
-      const apng = apngParse(imgBuffer);
+      const apng = APNGParse(imgBuffer);
       if (apng instanceof Error) {
         return;
       }
-      while (
-        !element.current?.querySelector("img") &&
-        !element.current?.querySelector("video[class*=embedVideo]")
-      ) {
-        await Utils.sleep(100);
-      }
+      await waitForElement();
       apngRef.current = apng;
     };
     const getAndSetGif = async (): Promise<void> => {
@@ -72,7 +73,8 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
         canvas.width = frame.dims.width;
         canvas.height = frame.dims.height;
 
-        const imageData = new ImageData(frame.patch, frame.dims.width, frame.dims.height);
+        const patch = new Uint8ClampedArray(frame.patch);
+        const imageData = new ImageData(patch, frame.dims.width, frame.dims.height);
 
         ctx.putImageData(imageData, 0, 0);
         const img = new Image();
@@ -80,44 +82,38 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
         img.crossOrigin = "anonymous";
         return img;
       });
-      while (
-        !element.current?.querySelector("img") &&
-        !element.current?.querySelector("video[class*=embedVideo]")
-      ) {
-        await Utils.sleep(100);
-      }
+      await waitForElement();
       gifRef.current = { duration, frames };
     };
     const onMouseMove = (e): void => {
+      const boundingRect = element.current.getBoundingClientRect();
       setCursorPosition({
         x:
           Number(
-            e.clientX < element.current!.getBoundingClientRect().left
-              ? element.current!.getBoundingClientRect().left
-              : e.clientX > element.current!.getBoundingClientRect().right
-                ? element.current!.getBoundingClientRect().right
+            e.clientX < boundingRect.left
+              ? boundingRect.left
+              : e.clientX > boundingRect.right
+                ? boundingRect.right
                 : e.clientX,
           ) -
-          element.current!.getBoundingClientRect().left -
+          boundingRect.left -
           0.5,
         y:
           Number(
-            e.clientY < element.current!.getBoundingClientRect().top
-              ? element.current!.getBoundingClientRect().top
-              : e.clientY > element.current!.getBoundingClientRect().bottom
-                ? element.current!.getBoundingClientRect().bottom
+            e.clientY < boundingRect.top
+              ? boundingRect.top
+              : e.clientY > boundingRect.bottom
+                ? boundingRect.bottom
                 : e.clientY,
           ) -
-          element.current!.getBoundingClientRect().top -
+          boundingRect.top -
           0.5,
       });
     };
     const onKeyDown = (e): void => {
       if (e.key === "C" && e.getModifierState("Shift")) {
         DiscordNative.clipboard.copy(hexRef.current);
-        ToastUtils.toast("Hex Copied to Clipboard.", ToastUtils.Kind.SUCCESS, {
-          duration: 5000,
-        });
+        toast.toast("Hex Copied to Clipboard.", toast.Kind.SUCCESS);
       }
     };
     const onMouseOver = (): void => {
@@ -131,11 +127,11 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
     element.current.addEventListener("mousemove", onMouseMove);
     element.current.addEventListener("mouseover", onMouseOver);
     element.current.addEventListener("mouseout", onMouseOut);
-    waitForVideo();
-    getAndSetDimensions();
     getAndSetHost();
-    getAndSetApng();
-    getAndSetGif();
+    void waitForVideo();
+    void getAndSetDimensions();
+    void getAndSetApng();
+    void getAndSetGif();
     return () => {
       document.removeEventListener("keydown", onKeyDown);
       element.current.removeEventListener("mousemove", onMouseMove);
@@ -143,13 +139,17 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
       element.current.removeEventListener("mouseout", onMouseOut);
     };
   }, [props.src]);
+
   React.useEffect(() => {
+    const resetHex = (): void => {
+      setHex("#000000");
+      hexRef.current = "#000000";
+    };
     const getAndSetHex = (): void => {
-      const img = element.current?.querySelector("img:not(.imgUtils-lens>img)") as HTMLImageElement;
+      const img: HTMLImageElement = element.current?.querySelector("img:not(.imgUtils-lens>img)");
       if (!img) return;
       if (!mouseOver) {
-        setHex("#000000");
-        hexRef.current = "#000000";
+        resetHex();
         return;
       }
 
@@ -157,10 +157,10 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
       setHex(hex);
       hexRef.current = hex;
     };
+
     const onTimeUpdate = (): void => {
       if (!mouseOver) {
-        setHex("#000000");
-        hexRef.current = "#000000";
+        resetHex();
         return;
       }
       const hex = Utils.getElementHex(videoRef.current, cursorPosition);
@@ -168,7 +168,7 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
       hexRef.current = hex;
     };
     const setApngInterval = (): (() => void) => {
-      if (!apngRef.current) return () => {};
+      if (!apngRef.current) return () => void 0;
       const duration = apngRef.current.playTime / apngRef.current.frames.length;
 
       const interval = setInterval(async () => {
@@ -176,8 +176,7 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
         await frame.createImage();
         apngRef.current.frames.push(frame);
         if (!mouseOver) {
-          setHex("#000000");
-          hexRef.current = "#000000";
+          resetHex();
           return;
         }
         const hex = Utils.getElementHex(frame.imageElement, cursorPosition);
@@ -189,13 +188,12 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
       };
     };
     const setGifInterval = (): (() => void) => {
-      if (!gifRef.current) return () => {};
+      if (!gifRef.current) return () => void 0;
       const interval = setInterval(() => {
         const frame = gifRef.current.frames.shift();
         gifRef.current.frames.push(frame);
         if (!mouseOver) {
-          setHex("#000000");
-          hexRef.current = "#000000";
+          resetHex();
           return;
         }
         const hex = Utils.getElementHex(frame, cursorPosition);
@@ -216,92 +214,65 @@ export default React.memo((props: Types.ImageDetailsProps): React.ReactElement =
       clearGifInterval?.();
     };
   }, [mouseOver, videoRef.current, apngRef.current, cursorPosition]);
-  if (props.redesigned)
-    return (
-      <>
-        {SettingValues.get("hex", defaultSettings.hex) && (
-          <Tooltip text="Shift+C To Copy">
-            <Flex
-              direction={Flex.Direction.HORIZONTAL}
-              justify={Flex.Justify.CENTER}
-              style={{
-                height: "28px",
-                marginBottom: "2px",
-                marginTop: "2px",
-                width: "64px",
-                backgroundColor: hex,
-                borderRadius: "10px",
-              }}>
-              <Text.Eyebrow
-                style={{
-                  textAlign: "center",
-                  lineHeight: "28px",
-                  fontSize: "13px",
-                  color: hex,
-                  filter: "invert(1)",
-                }}>
-                {hex}
-              </Text.Eyebrow>
-            </Flex>
-          </Tooltip>
-        )}
-        {SettingValues.get("dimensions", defaultSettings.dimensions) && (
-          <Tooltip text={`${dimensions} (Height*Width)`}>
-            <Flex
-              direction={Flex.Direction.HORIZONTAL}
-              justify={Flex.Justify.CENTER}
-              style={{
-                height: "32px",
-                width: "32px",
-                alignItems: "center",
-                color: "var(--interactive-normal)",
-              }}>
-              <Icons.info />
-            </Flex>
-          </Tooltip>
-        )}
-        {SettingValues.get("host", defaultSettings.host) && (
-          <Tooltip text={`Host: ${host}`}>
-            <Flex
-              direction={Flex.Direction.HORIZONTAL}
-              justify={Flex.Justify.CENTER}
-              style={{
-                height: "32px",
-                width: "32px",
-                alignItems: "center",
-                color: "var(--interactive-normal)",
-              }}>
-              <Icons.host />
-            </Flex>
-          </Tooltip>
-        )}
-      </>
-    );
+
   return (
-    <div className={`imageUtils-details`}>
-      <Flex direction={Flex.Direction.HORIZONTAL} justify={Flex.Justify.BETWEEN}>
-        <Flex direction={Flex.Direction.VERTICAL} justify={Flex.Justify.BETWEEN}>
-          {props.children}
-        </Flex>
-        <span>
+    <>
+      {SettingValues.get("hex", DefaultSettings.hex) && (
+        <Tooltip text="Shift+C To Copy">
           <Flex
-            direction={Flex.Direction.VERTICAL}
-            justify={Flex.Justify.START}
-            style={{ paddingTop: "5px" }}>
-            {SettingValues.get("hex", defaultSettings.hex) && (
-              <Text.Normal className="imageUtils-detailsText">{hex} (Shift+C To Copy)</Text.Normal>
-            )}
-            {SettingValues.get("dimensions", defaultSettings.dimensions) && (
-              <Text.Normal className="imageUtils-detailsText">
-                {dimensions} (Height*Width)
-              </Text.Normal>
-            )}
-            {SettingValues.get("host", defaultSettings.host) && (
-              <Text.Normal className="imageUtils-detailsText">Host: {host}</Text.Normal>
-            )}
+            direction={Flex.Direction.HORIZONTAL}
+            justify={Flex.Justify.CENTER}
+            style={{
+              height: "28px",
+              marginBottom: "2px",
+              marginTop: "2px",
+              width: "64px",
+              backgroundColor: hex,
+              borderRadius: "10px",
+            }}>
+            <Text.Eyebrow
+              style={{
+                textAlign: "center",
+                lineHeight: "28px",
+                fontSize: "13px",
+                color: hex,
+                filter: "invert(1)",
+              }}>
+              {hex}
+            </Text.Eyebrow>
           </Flex>
-        </span>
-      </Flex>
-    </div>
+        </Tooltip>
+      )}
+      {SettingValues.get("dimensions", DefaultSettings.dimensions) && (
+        <Tooltip text={`${dimensions} (Height*Width)`}>
+          <Flex
+            direction={Flex.Direction.HORIZONTAL}
+            justify={Flex.Justify.CENTER}
+            style={{
+              height: "32px",
+              width: "32px",
+              alignItems: "center",
+              color: "var(--interactive-normal)",
+            }}>
+            <Icons.info />
+          </Flex>
+        </Tooltip>
+      )}
+      {SettingValues.get("host", DefaultSettings.host) && (
+        <Tooltip text={`Host: ${host}`}>
+          <Flex
+            direction={Flex.Direction.HORIZONTAL}
+            justify={Flex.Justify.CENTER}
+            style={{
+              height: "32px",
+              width: "32px",
+              alignItems: "center",
+              color: "var(--interactive-normal)",
+            }}>
+            <Icons.host />
+          </Flex>
+        </Tooltip>
+      )}
+    </>
   );
 });

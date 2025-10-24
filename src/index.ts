@@ -1,25 +1,22 @@
 import { Injector, Logger, settings } from "replugged";
-import { defaultSettings } from "./lib/consts";
+import { DefaultSettings } from "@consts";
 import "./style.css";
 export const PluginInjector = new Injector();
 export const { utils: PluginInjectorUtils } = PluginInjector;
-export const PluginLogger = Logger.plugin("ImageUtils", "#b380ff");
-export const USRDB = new Map<string, string>();
-export const SettingValues = await settings.init("dev.yofukashino.ImageUtils", defaultSettings);
-import Settings from "./Components/Settings";
-import Injections from "./injections/index";
-import Utils from "./lib/utils";
+export const PluginLogger = Logger.plugin("ImageUtils", "#ffffff80");
+export const SettingValues = settings.init("dev.yofukashino.ImageUtils", DefaultSettings);
+import Settings from "@components/Settings";
+import Injections from "@Injections";
 
 export const start = (): void => {
   Settings.registerSettings();
-  void Injections.applyInjections().catch((err) => PluginLogger.error(err));
-  void Utils.loadUSRBD();
+  void Injections.applyInjections();
 };
 
 export const stop = (): void => {
-  PluginInjector.uninjectAll();
+  Injections.removeInjections();
 };
 
-export { Settings } from "./Components/Settings.jsx";
+export { Settings } from "@components/Settings";
 
-export { _zoom, _details } from "./plaintextFunctions";
+export { _zoom, _details, _expandVideo } from "./plaintextFunctions";

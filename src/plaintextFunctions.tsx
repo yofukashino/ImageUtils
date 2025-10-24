@@ -1,14 +1,32 @@
-import { SettingValues } from "./index";
-import { defaultSettings } from "./lib/consts";
-import ImageDetails from "./Components/ImageDetails";
-import Types from "./types";
+import { SettingValues } from "@this";
+import { DefaultSettings } from "@consts";
+import ImageDetails from "@components/ImageDetails";
+import ExpandVideo, { type VideoInstance } from "@components/ExpandVideo";
 
-export const _zoom = (comp: Types.DefaultTypes.AnyFunction): Types.DefaultTypes.AnyFunction => {
-  if (SettingValues.get("hideLens", defaultSettings.hideLens)) return comp;
+export const _zoom = (zoomJsx: React.FC): React.FC => {
+  if (SettingValues.get("hideLens", DefaultSettings.hideLens)) return zoomJsx;
   return () => null;
 };
 
-export const _details = (props?: { src?: string; original?: string }): React.ReactElement => {
-  if (!props?.src && !props?.original) return null;
-  return <ImageDetails src={props?.src || props?.original} redesigned={true} />;
+export const _details = ({
+  original,
+  src,
+  type,
+}: {
+  src?: string;
+  original?: string;
+  type?: string;
+}): React.ReactElement => {
+  if ((!src && !original) || type === "VIDEO") return null;
+  return <ImageDetails src={src || original} />;
+};
+
+export const _expandVideo = (
+  instance: VideoInstance,
+  FullScreen: React.FC<unknown>,
+  FullScreenProps: Record<string, unknown>,
+): React.ReactElement => {
+  return (
+    <ExpandVideo instance={instance} FullScreen={FullScreen} FullScreenProps={FullScreenProps} />
+  );
 };

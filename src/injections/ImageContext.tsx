@@ -1,143 +1,135 @@
-import { PluginInjectorUtils, SettingValues } from "../index";
-import { components as DiscordComponents } from "replugged/common";
+import { webpack } from "replugged";
+import { components } from "replugged/common";
 import { ContextMenu } from "replugged/components";
-import Utils from "../lib/utils";
-import Types from "../types";
-import { defaultSettings, searchEngines } from "../lib/consts";
+import { PluginInjectorUtils, SettingValues } from "@this";
+import { DefaultSettings, SearchEngines } from "@consts";
+import Utils from "@Utils";
+import Types from "@Types";
 
-const MenuSliderControl = Object.values(DiscordComponents).find((c) =>
-  c?.render?.toString?.()?.includes?.("slider"),
-) as React.ComponentType<{
-  ref: unknown;
-  minValue: number;
-  maxValue: number;
-  value: number;
-  onChange(value: number): void;
-  renderValue?(value: number): string;
-}>;
+const MenuSliderControl = webpack.getComponentBySource<Types.SliderControl>(components, "slider");
 
-export default (): void => {
-  PluginInjectorUtils.addMenuItem(
-    Types.DefaultTypes.ContextMenuTypes.ImageContext,
-    ({ src }: { src: string }, menu) => {
-      menu.children = (menu?.children as React.ReactElement[]).filter(
-        (c) =>
-          !c?.props?.children?.props?.id?.includes?.("imageUtils") &&
-          !c?.props?.children?.some?.((i) => i?.props?.id?.includes?.("imageUtils")),
-      );
-      const [square, setSquare] = Utils.useSettingArray(
-        SettingValues,
-        "square",
-        defaultSettings.square,
-      );
-      const [pixelZoom, setPixelZoom] = Utils.useSettingArray(
-        SettingValues,
-        "pixelZoom",
-        defaultSettings.pixelZoom,
-      );
+PluginInjectorUtils.addMenuItem(
+  Types.DefaultTypes.ContextMenuTypes.ImageContext,
+  ({ src }: { src: string }, menu) => {
+    menu.children = (menu?.children as React.ReactElement[]).filter(
+      (c) =>
+        !c?.props?.children?.props?.id?.includes?.("imageUtils") &&
+        !c?.props?.children?.some?.((i) => i?.props?.id?.includes?.("imageUtils")),
+    );
+    const [square, setSquare] = Utils.useSettingArray(
+      SettingValues,
+      "square",
+      DefaultSettings.square,
+    );
+    const [pixelZoom, setPixelZoom] = Utils.useSettingArray(
+      SettingValues,
+      "pixelZoom",
+      DefaultSettings.pixelZoom,
+    );
 
-      (menu?.children as React.ReactElement[])?.unshift?.(
-        <ContextMenu.MenuGroup>
-          {SettingValues.get("hideLens") ? null : (
-            <>
-              <ContextMenu.MenuCheckboxItem
-                id="imageUtils-square"
-                label="Square Lens"
-                checked={square}
-                action={() => setSquare(!square)}
-              />
-              <ContextMenu.MenuCheckboxItem
-                id="imageUtils-pixelZoom"
-                label="Pixel Zoom"
-                checked={pixelZoom}
-                action={() => setPixelZoom(!pixelZoom)}
-              />
-              <ContextMenu.MenuControlItem
-                id="imageUtils-zoom"
-                label="Zoom"
-                control={(props, ref) => (
-                  <MenuSliderControl
-                    ref={ref}
-                    {...props}
-                    minValue={1}
-                    maxValue={50}
-                    {...Utils.useSetting(SettingValues, "zoom", defaultSettings.zoom)}
-                    renderValue={(value: number) => `${value.toFixed(0)}x`}
+    const engines = SettingValues.useValue("engines", DefaultSettings.engines);
+    const hideLens = SettingValues.useValue("hideLens", DefaultSettings.hideLens);
+
+    menu?.children?.unshift?.(
+      <ContextMenu.MenuGroup>
+        {hideLens ? null : (
+          <>
+            <ContextMenu.MenuCheckboxItem
+              id="imageUtils-square"
+              label="Square Lens"
+              checked={square}
+              action={() => setSquare(!square)}
+            />
+            <ContextMenu.MenuCheckboxItem
+              id="imageUtils-pixelZoom"
+              label="Pixel Zoom"
+              checked={pixelZoom}
+              action={() => setPixelZoom(!pixelZoom)}
+            />
+            <ContextMenu.MenuControlItem
+              id="imageUtils-zoom"
+              label="Zoom"
+              control={(props, ref) => (
+                <MenuSliderControl
+                  ref={ref}
+                  {...props}
+                  minValue={1}
+                  maxValue={50}
+                  {...Utils.useSetting(SettingValues, "zoom", DefaultSettings.zoom)}
+                  renderValue={(value: number) => `${value.toFixed(0)}x`}
+                />
+              )}
+            />
+            <ContextMenu.MenuControlItem
+              id="imageUtils-size"
+              label="Lens Size"
+              control={(props, ref) => (
+                <MenuSliderControl
+                  ref={ref}
+                  {...props}
+                  minValue={50}
+                  maxValue={1000}
+                  {...Utils.useSetting(SettingValues, "size", DefaultSettings.size)}
+                  renderValue={(value: number) => `${value.toFixed(0)}px`}
+                />
+              )}
+            />
+            <ContextMenu.MenuControlItem
+              id="imageUtils-speed"
+              label="Scroll Speed"
+              control={(props, ref) => (
+                <MenuSliderControl
+                  ref={ref}
+                  {...props}
+                  minValue={0.1}
+                  maxValue={5}
+                  {...Utils.useSetting(SettingValues, "scrollSpeed", DefaultSettings.scrollSpeed)}
+                  renderValue={(value: number) => `${value.toFixed(3)}x`}
+                />
+              )}
+            />
+          </>
+        )}
+        {engines.length > 0 && (
+          <ContextMenu.MenuItem
+            label="Search Image"
+            id="imageUtils-search-image"
+            action={() => {
+              for (const [, engine] of Object.entries(SearchEngines).filter(([engine]) =>
+                engines.includes(engine),
+              )) {
+                open(`${engine}${encodeURIComponent(src)}`, "_blank");
+              }
+            }}>
+            {engines.length > 1 &&
+              Object.keys(SearchEngines)
+                .filter((engine) => engines.includes(engine))
+                .map((engine: keyof typeof SearchEngines) => (
+                  <ContextMenu.MenuItem
+                    key={engine}
+                    id={`search-image-${engine}`}
+                    icon={() => (
+                      <img
+                        style={{
+                          borderRadius: "50%",
+                        }}
+                        aria-hidden="true"
+                        height={16}
+                        width={16}
+                        src={new URL("/favicon.ico", SearchEngines[engine])
+                          .toString()
+                          .replace("lens.", "")}
+                      />
+                    )}
+                    label={engine}
+                    action={() =>
+                      open(`${SearchEngines[engine]}${encodeURIComponent(src)}`, "_blank")
+                    }
                   />
-                )}
-              />
-              <ContextMenu.MenuControlItem
-                id="imageUtils-size"
-                label="Lens Size"
-                control={(props, ref) => (
-                  <MenuSliderControl
-                    ref={ref}
-                    {...props}
-                    minValue={50}
-                    maxValue={1000}
-                    {...Utils.useSetting(SettingValues, "size", defaultSettings.size)}
-                    renderValue={(value: number) => `${value.toFixed(0)}px`}
-                  />
-                )}
-              />
-              <ContextMenu.MenuControlItem
-                id="imageUtils-speed"
-                label="Scroll Speed"
-                control={(props, ref) => (
-                  <MenuSliderControl
-                    ref={ref}
-                    {...props}
-                    minValue={0.1}
-                    maxValue={5}
-                    {...Utils.useSetting(SettingValues, "scrollSpeed", defaultSettings.scrollSpeed)}
-                    renderValue={(value: number) => `${value.toFixed(3)}x`}
-                  />
-                )}
-              />
-            </>
-          )}
-          {SettingValues.get("engines", defaultSettings.engines).length > 0 && (
-            <ContextMenu.MenuItem
-              label="Search Image"
-              id="imageUtils-search-image"
-              action={() => {
-                for (const [, engine] of Object.entries(searchEngines).filter(([engine]) =>
-                  SettingValues.get("engines", defaultSettings.engines).includes(engine),
-                )) {
-                  open(`${engine}${encodeURIComponent(src)}`, "_blank");
-                }
-              }}>
-              {SettingValues.get("engines", defaultSettings.engines).length > 1 &&
-                Object.keys(searchEngines)
-                  .filter((engine) =>
-                    SettingValues.get("engines", defaultSettings.engines).includes(engine),
-                  )
-                  .map((engine) => (
-                    <ContextMenu.MenuItem
-                      id={`search-image-${engine}`}
-                      icon={() => (
-                        <img
-                          style={{
-                            borderRadius: "50%",
-                          }}
-                          aria-hidden="true"
-                          height={16}
-                          width={16}
-                          src={new URL("/favicon.ico", searchEngines[engine])
-                            .toString()
-                            .replace("lens.", "")}
-                        />
-                      )}
-                      label={engine}
-                      action={() =>
-                        open(`${searchEngines[engine]}${encodeURIComponent(src)}`, "_blank")
-                      }
-                    />
-                  ))}
-            </ContextMenu.MenuItem>
-          )}
-        </ContextMenu.MenuGroup>,
-      );
-    },
-  );
-};
+                ))}
+          </ContextMenu.MenuItem>
+        )}
+      </ContextMenu.MenuGroup>,
+    );
+  },
+);
