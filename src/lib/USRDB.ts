@@ -77,6 +77,12 @@ class USRDB {
     });
   }
 
+  public has(userId: string): boolean {
+    if (this.#isExpired) void this.load();
+    const etag = this.#cache[userId];
+    return Boolean(etag);
+  }
+
   public get(userId: string): string {
     if (this.#isExpired) void this.load();
     const etag = this.#cache[userId];
